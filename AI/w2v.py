@@ -28,7 +28,7 @@ with open('./AI/r5e_name.txt')as f:
 		n+=1
 		if(n>=50):
 			break
-with open('r5e_name.txt')as f:
+with open('./AI/r5e_name.txt')as f:
 	# for line in f:
 	f=[stopword.Remove(komoran.nouns(krpre.Clean_text(line),0))for line in f]
 	print(f)
@@ -40,9 +40,9 @@ with open('r5e_name.txt')as f:
 	# n+=1
 	# if(n>=50):
 	# 	break
-model.save('kotrain.bin')
+model.save('./AI/kotrain.bin')
 model=gensim.models.Word2Vec.load('./AI/kotrain.bin')
-with open('r5e_name.txt')as f:
+with open('./AI/r5e_name.txt')as f:
 	for line in f:
 		line = krpre.Clean_text(line)
 		# line = spacing(line)
