@@ -1,6 +1,7 @@
 import torch
 import re
 import emoji  # 이모티콘 제거
+import cleantext
 from konlpy.tag import Komoran
 
 '''
@@ -28,6 +29,7 @@ from konlpy.tag import Komoran
 '''
 
 def Clean_text(text):  # 기초
+	# return cleantext.clean(text, punct=True, no_emoji=True,)
 	text = re.sub('[-=+,#/\?:^$.@*\"※~&%ㆍ!』\\‘|\(\)\[\]\<\>`\'…》]', '', text)
 	return re.sub(emoji.get_emoji_regexp(), r"", text)  # 이모티콘 제거
 
