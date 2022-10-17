@@ -6,6 +6,7 @@ import { PreferMiliroutine } from "@/components/Element/PreferMiliroutine";
 import { ReactComponent as Check_green } from "@/assets/check_green.svg"
 import Logo from "@/assets/Logo.svg";
 
+
 export const SignupPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
@@ -184,20 +185,10 @@ export const SignupMorePage = () => {
         <div><PreferMiliroutine label="30분 공부하기" /></div>
       </div>
 
-
-      <div className="text-center mb-24">
-        <button className="bg-orange text-3xl font-bold text-white-200 rounded-full w-48 h-20 mt-32">
-          계정 생성
-        </button>
+      <div className="text-center">
+        <Button label="계정 생성" text="text-xl" margin="mb-24 mt-32" onClick={()=>{}}/>
       </div>
-
 
     </div>
   )
 };
-
-
-
-
-
-
