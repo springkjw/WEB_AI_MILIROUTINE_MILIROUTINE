@@ -4,7 +4,7 @@ import { Form, Button } from "@/components/Element";
 import { Category } from "@/components/Element/Category";
 import { PreferMiliroutine } from "@/components/Element/PreferMiliroutine";
 import { ReactComponent as Check_green } from "@/assets/check_green.svg"
-import Logo from "@/assets/Logo.png";
+import Logo from "@/assets/Logo.svg";
 
 export const SignupPage = () => {
   const navigate = useNavigate();
@@ -126,7 +126,7 @@ export const SignupMorePage = () => {
 
 
       <div className="text-center mt-24">
-        <span className="text-2xl font-bold mr-36">관심 카테고`리 설정</span>
+        <span className="text-2xl font-bold mr-36">관심 카테고리 설정</span>
         <span className="text-green ">최소 1개 이상</span>
         {/* 최소1개이상을 왼쪽으로 옮겨야 하는데 잘 안됨. + svg도 2 */}
       </div>
@@ -139,7 +139,7 @@ export const SignupMorePage = () => {
           <div className="p-1"><Category label="경제" /></div>
           <div className="p-1"><Category label="자기관리" /></div>
           <div className="p-1"><Category label="진로" /></div>
-          <div className="p-1"><Category label="취미" /></div>`
+          <div className="p-1"><Category label="취미" /></div>
           <div className="p-1"><Category label="정서" /></div>
           <div className="p-1"><Category label="건강" /></div>
         </div>
