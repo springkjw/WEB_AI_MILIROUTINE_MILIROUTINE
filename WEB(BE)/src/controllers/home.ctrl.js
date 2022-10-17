@@ -19,7 +19,6 @@ const ouput = {
 			success : true,
 			isLogin : true,
 			user : userInfo
-			
 		})
 	}
 }

@@ -1,25 +1,25 @@
 import { ReactComponent as Check_gray } from "@/assets/check_gray.svg"
 import { useState } from "react"
 
-interface Props {
+interface PreferMiliroutineProps {
   label: string
 }
 
 
-export const PreferMiliroutine = ({ label }: Props) => {
+export const PreferMiliroutine = ({ label }: PreferMiliroutineProps) => {
 
   let [checked, setClicked] = useState(false);
 
   return (
-    <button className={checked == false ? "w-420 h-14 rounded-2xl bg-gray-300"
-    : "w-420 h-14 rounded-2xl bg-orange"}
+    <button className= {`w-420 h-14 rounded-2xl ${!checked ? 'bg-gray-300'
+    : 'bg-orange'}`}
     
     onClick={()=>{
-      setClicked(!checked)
+      setClicked(checked => !checked)
     }}>
 
-      <p className={checked == false ? "text-lg font-medium"
-      : "text-lg text-white-200 font-semibold"}>{label}</p>
+      <p className={`text-lg ${!checked ? 'font-medium'
+      : 'text-white-200 font-semibold'}`}>{label}</p>
       
     </button>
   )
