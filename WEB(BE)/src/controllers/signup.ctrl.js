@@ -35,8 +35,10 @@ const user = {
 		
 		for(const key in param){
 			if(!param[key]){
-				res.status(400);
-				throw new Error(name[key] + "의 값이 없습니다!")
+				res.status(400).json({
+					success : false,
+					err : name[key] + "의 값이 없습니다!"
+				});
 			}
 		}
 		
@@ -44,13 +46,17 @@ const user = {
 		const userInfoWithEmail = await data.user.get('email', userEmail);
 
 		if(userInfoWithId.length > 0){
-			res.status(400);
-			throw new Error("이미 사용중인 아이디입니다!")
+			res.status(400).json({
+				success : false,
+				err : "이미 사용중인 아이디입니다!"
+			});
 		}
 		
 		if(userInfoWithEmail.length > 0){
-			res.status(400);
-			throw new Error("이미 사용중인 이메일입니다!")
+			res.status(400).json({
+				success : false,
+				err : "이미 사용중인 이메일입니다!"
+			});
 		}
 		
 		data.user.add(param);
@@ -58,6 +64,7 @@ const user = {
 		const token = jwt.token.create(req, res, userId, userName);
 		
 		return res.json({
+			success : true,
 			token : token,
 			user : param
 		})
@@ -65,19 +72,23 @@ const user = {
 	
 	addInfo : async(req, res) => {
 		if(!user.isToken(req, res)){
-			const token = req.headers.authorization.split(' ')[1]
-			const userId = jwt.decode(token).id
-		}
-		else{
-			return res.status(401).json({
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
 				err : "회원가입을 먼저 해주세요!"
 			})
 		}
+		
+		const token = req.headers.authorization.split(' ')[1]
+		const userId = jwt.decode(token).id
 		
 		const user_no = await data.user.get('id', userId).no;
 		
 		data.user_category.add(user_no, req.body.category);
 		
+		return res.json({
+			success : true
+		})
 	},
 	
 	isToken : (req, res) => {

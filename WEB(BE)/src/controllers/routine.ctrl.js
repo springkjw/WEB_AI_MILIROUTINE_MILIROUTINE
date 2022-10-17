@@ -16,17 +16,16 @@ const user = {
 		}
 		
 		catch(err){
-			console.log(err);
-			return false;
+			throw new Error(err);
 		}
-		
 	},
 	
 	getId : (req, res) => {
 		if(!user.isToken(req, res)){
-			res.json({
-				err : '로그인을 해주세요!',
-				isLogin : false
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
 			})
 		}
 		
@@ -41,9 +40,10 @@ const routine = {
 	make : (req, res) =>{
 		
 		if(!user.isToken(req, res)){
-			return res.status(403).json({
-				err : "로그인을 해주세요!",
-				isLogin : false
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
 			})
 		}
 		
@@ -77,9 +77,9 @@ const routine = {
 		const param2 = [host, routine_id, type];
 		data.user_routine.add(param2);
 		
-		return res.json({
-			routine : param,
-			msg : "루틴 개설 완료!"
+		res.json({
+			success : true,
+			routine : param
 		})
 	},
 	
@@ -89,6 +89,7 @@ const routine = {
 		const param = await data.routine.get('id', routineId);
 		
 		res.json({
+			success : true,
 			routine_id : routineId,
 			routine : param
 		})
