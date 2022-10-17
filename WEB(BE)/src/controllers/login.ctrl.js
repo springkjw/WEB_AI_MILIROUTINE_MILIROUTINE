@@ -17,9 +17,8 @@ const user = {
 	checkUserInfo : async(req, res) => {
 		
 		if(!req.body.id){
-			return res.status(401).json({
-				err : "ID가 없습니다."
-			})
+			res.status(400);
+			throw new Error("ID를 찾을 수 없습니다")
 		}
 		
 		const userInfo = await data.user.get('id', req.body.id);
@@ -32,29 +31,24 @@ const user = {
 					
 					return res.json({
 						token : token, // token을 전달하고 client가 token을 헤더에 저장
-						user : userInfo[0],
-						msg : "로그인에 성공했습니다!"
+						user : userInfo[0]
 					});
 				}
 				else{
-					return res.status(401).json({
-						err : "비밀번호가 틀렸습니다!"
-					})
+					res.status(400);
+					throw new Error("비밀번호가 틀렸습니다!");
 				}
 			}
 
 			else{
-				return res.status(401).json({
-					err : "아이디가 존재하지 않습니다!"
-				})
+				res.status(400);
+				throw new Error("아이디가 존재하지 않습니다!");
 			}	
 		}
 		
 		else{
-			return res.status(403).json({
-				err : "이미 로그인 되어있습니다!",
-				isLogin : true
-			})
+			res.status(400);
+			throw new Error("이미 로그인 되어있습니다!");
 		}
 
 	},
@@ -71,8 +65,8 @@ const user = {
 		}
 		
 		catch(err){
-			console.log(err);
-			return false;
+			res.status(400);
+			throw new Error("로그인이 되어있지 않거나 토큰이 만료되었습니다!");
 		}
 		
 	}

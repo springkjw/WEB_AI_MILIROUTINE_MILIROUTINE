@@ -31,28 +31,26 @@ const user = {
 		const userName = req.body.name;
 
 		const param = [userId, userPassword, userEmail, userName, salt]
+		const name = ['id', 'password', 'email', 'name', 'salt']
 		
-		for(const item of param){
-			if(!item){
-				return res.status(401).json({
-					err : item + "의 값이 없습니다!"
-				})
+		for(const key in param){
+			if(!param[key]){
+				res.status(400);
+				throw new Error(name[key] + "의 값이 없습니다!")
 			}
 		}
 		
-		const userInfoWithId = await data.user.get('id', req.body.id);
-		const userInfoWithEmail = await data.user.get('email', req.body.email);
+		const userInfoWithId = await data.user.get('id', userId);
+		const userInfoWithEmail = await data.user.get('email', userEmail);
 
 		if(userInfoWithId.length > 0){
-			return res.status(401).json({
-				err : "이미 사용중인 아이디입니다!"
-			})
+			res.status(400);
+			throw new Error("이미 사용중인 아이디입니다!")
 		}
 		
 		if(userInfoWithEmail.length > 0){
-			return res.status(401).json({
-				err : "이미 사용중인 이메일입니다!"
-			})
+			res.status(400);
+			throw new Error("이미 사용중인 이메일입니다!")
 		}
 		
 		data.user.add(param);
@@ -61,8 +59,7 @@ const user = {
 		
 		return res.json({
 			token : token,
-			user : param,
-			msg : "회원가입에 성공했습니다!"
+			user : param
 		})
 	},
 	
@@ -95,8 +92,8 @@ const user = {
 		}
 		
 		catch(err){
-			console.log(err);
-			return false;
+			res.status(400);
+			throw new Error("로그인이 되어있지 않거나 토큰이 만료되었습니다!");
 		}
 	}
 }
