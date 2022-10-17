@@ -26,6 +26,3 @@ export const PreferMiliroutine = ({ label }: PreferMiliroutineProps) => {
     </button>
   );
 };
-
-//svg 이모티콘 사용하면 내부 label이 줄바꿈이 되어버림. 수정도 안먹혀서 일단 보류.
-//일단 내부 글자 패딩은 안맞춰뒀음.
