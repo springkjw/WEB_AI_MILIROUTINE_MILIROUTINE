@@ -60,7 +60,7 @@ const output = {
 		const token = req.headers.authorization.split(' ')[1];
 		const decoded = jwt.decode(token)
 		
-		const myRoutine = await data.user_routine.get('user_no',40)
+		const myRoutine = await data.user_routine.get('user_no',decoded.no);
 		const likeRoutineId = [];
 		
 		for(const routine of myRoutine){
@@ -76,10 +76,33 @@ const output = {
 	},
 	
 	auth : (req, res) => {
-		const routine = data.routine.get('id', req.params.userId);
+		const routine = data.routine.get('id', req.params.routineId);
 		
 		res.json({
 			routine : routine
+		})
+	},
+	
+	goods : async (req, res) => {
+		if(!user.isToken(req, res)){
+			return res.status(403).json({
+				err : '로그인을 해주세요!',
+				isLogin : false
+			})
+		}
+		
+		const token = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.decode(token)
+		
+		const userPoint = await data.user.get('id', decoded.id).point;
+		
+		const goods = await data.goods.getAll();
+		
+		
+		res.json({
+			userPoint : userPoint,
+			goods : goods	 // MySQL Server 통일 Issue 확인
+			// id, name, description, thubnail_img,price 
 		})
 	}
 }
@@ -188,7 +211,7 @@ const routine = {
 		const decoded = jwt.decode(token)
 		
 		try{
-			const user_no = decoded.id;
+			const user_no = decoded.no;
 			const routine_id = req.params.routineId;
 			/* week, day, date, img ,text 받아오기 */
 			const week = req.body.week;
@@ -212,8 +235,51 @@ const routine = {
 	}
 }
 
+const goods = {
+	buy : async (req, res) => {
+		if(!user.isToken(req, res)){
+			return res.status(403).json({
+				err : '로그인을 해주세요!',
+				isLogin : false
+			})
+		}
+		
+		const token = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.decode(token)
+		
+		const userNo = decoded.id;
+		const goodsId = req.body.goods_id;
+		
+		
+		const date = new Date();
+		const year = date.getFullYear();
+		const month = ('0' + (date.getMonth() + 1)).slice(-2);
+		const day = ('0' + date.getDate()).slice(-2);
+		const dateStr = year + '-' + month + '-' + day;
+		
+		const hours = ('0' + date.getHours()).slice(-2);
+		const minutes = ('0' + date.getMinutes()).slice(-2);
+		const seconds = ('0' + date.getSeconds()).slice(-2);
+		const timeStr = hours + ':' + minutes + ':' + seconds;
+		
+		const dayStr = dateStr+' '+timeStr
+		
+		const param = [userNo, goodsId, dayStr];
+		
+	  	data.user_goods.add(param);
+		
+		const goods = await data.goods.get('id', goodsId);
+		
+		res.json({
+			goods : goods,
+			msg : 'user_goods에 정보 input 완료!'
+		})
+	}
+}
+
 module.exports = {
 	output,
 	user,
-	routine
+	routine,
+	goods
 }
