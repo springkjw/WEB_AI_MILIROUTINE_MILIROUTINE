@@ -146,8 +146,16 @@ const goods = {
 			});
 		});
 	},
-
 	
+	getAll :  async()=>{
+		return new Promise(function(resolve,reject){
+			db.query('SELECT * FROM goods', function(err, rows, fields){
+				if(err) {console.log(err);}
+				resolve(rows);
+			});
+		});
+	},
+	 
 	add : async(values)=>{
 		db.query('INSERT INTO goods (name, description, thumbnail_img, price) VALUES ?', [values] , function(err,rows, fields){
 				if(err) {
