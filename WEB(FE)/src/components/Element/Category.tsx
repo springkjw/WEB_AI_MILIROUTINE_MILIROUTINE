@@ -1,23 +1,22 @@
 import { useState } from "react"
 
-interface Props {
+interface CategoryProps {
   label: string
 }
 
-export const Category = ({ label }: Props) => {
+export const Category = ({ label }: CategoryProps) => {
 
   let [checked, setClicked] = useState(false);
 
   return (
-    <button className= {checked == false ? "w-32 h-32 rounded-2xl bg-white-200"
-      : "w-32 h-32 rounded-2xl bg-orange"}
+    <button className={`w-32 h-32 rounded-2xl ${!checked ? 'bg-white-200' : 'bg-orange'}`}
 
       onClick={() => {
-        setClicked(!checked)
+        setClicked(checked => !checked)
       }}>
 
-      <p className= {checked == false ? "text-gray-400 text-center text-2xl font-semibold"
-        : "text-white-200 text-center text-2xl font-semibold"}>{label}</p>
+      <p className={`text-center text-2xl font-semibold ${!checked ? 'text-gray-400' : 
+      'text-white-200'}`}>{label}</p>
     </button>
 
 
