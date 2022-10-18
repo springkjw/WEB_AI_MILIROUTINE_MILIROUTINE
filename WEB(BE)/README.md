@@ -219,6 +219,25 @@ INSERT INTO level_exp
 
 `BE 코드를 기반으로 작성하였으며 위 DB 구성표를 바탕으로 작성하였음`
 
+
+### :eyes: Home
+
+### GET : /
+
+> JSON BODY
+
+**X**
+
+> Return
+
+|return|내용|설명|
+|------|---|---|
+|success|성공여부|boolean (true/false)|
+|isLogin|로그인 여부|boolean (true/false)|
+|userInfo|현재 로그인된 사용자 정보|json {type:"JWT", no:(사용자no), id:(사용자id), name:(사용자이름)}|
+|err|에러 메세지|문자형|
+
+
 ### :eyes: Login
 
 ### POST : /auth/login
@@ -288,7 +307,37 @@ INSERT INTO level_exp
 |success|성공여부|boolean (true/false)|
 |isLogin|로그인 여부|boolean (true/false)|
 |routine|만든 루틴 정보|배열 [host(만든 유저 no), name, category, image, auth_cycle, auth_description, start_date, duration, point_info_list]|
-|routine_id|루틴 no|정수형|
 |err|에러 메세지|문자형|
 
 
+### GET : /routine/:routineId
+
+> JSON BODY
+
+**X**
+
+> Return
+
+|return|내용|설명|
+|------|---|---|
+|success|성공여부|boolean (true/false)|
+|routine_id|루틴 no|정수형|
+|routine|만든 루틴 정보|데이터 팩 {id, host, name, ceategory, thumbnail_img, auth_cycle, auth_Description_list, start_date, duration, point_info_list}|
+|err|에러 메세지|문자형|
+
+
+### :eyes: Popular
+
+### GET : /popular
+
+> JSON BODY
+
+**X**
+
+> Return
+
+|return|내용|설명|
+|------|---|---|
+|success|성공여부|boolean (true/false)|
+|rankedRoutine|랭킹대로 정렬된 루틴|참가자가 많은 순으로 정렬된 루틴 배열 / 배열의 0번째 요소가 routine_id, 1번째 요소가 참가자 수 / [(루틴 아이디), (참가자 수)]|
+|err|에러 메세지|문자형|
