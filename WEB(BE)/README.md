@@ -217,6 +217,8 @@ INSERT INTO level_exp
 
 ## 💁‍♂️ **REST API**
 
+`BE 코드를 기반으로 작성하였으며 위 DB 구성표를 바탕으로 작성하였음`
+
 ### :eyes: Login
 
 ### POST : /auth/login
@@ -271,20 +273,22 @@ INSERT INTO level_exp
 
 |body|내용|설명|
 |------|---|---|
-|id|아이디|문자형|
-|pw|비밀번호|문자형|
-|email|이메일|문자형|
-|name|이름|문자형|
-|category|관심 카테고리|카테고리 이름이 저장되어 있는 배열 (ex. ['study', 'health'])|
-|likeRoutine|선호하는 밀리루틴|루틴 아이디가 저장되어 있는 배열 (ex. [21, 34])|
+|name|밀리루틴 이름|문자형|
+|category|밀리루틴 카테고리|문자형|
+|fileUrl|루틴 대표 이미지 저장 url|문자형|
+|auth_cycle|인증 주기|정수형|
+|auth_description|참여 및 인증방법|인증 방법이 들어가있는 배열_1단계~5단계 (ex. ['매일 아침 8시에 기상 인증', '날짜 캡처']|
+|start_date|루틴 시작일|yyyy-mm-dd|
+|duration|루틴 진행 기간|정수형|
 
 > Return
 
 |return|내용|설명|
 |------|---|---|
 |success|성공여부|boolean (true/false)|
-|token|jwt토큰|문자형|
-|user|사용자 정보|배열 [userId, userPassword, userEmail, userName, salt]|
+|isLogin|로그인 여부|boolean (true/false)|
+|routine|만든 루틴 정보|배열 [host(만든 유저 no), name, category, image, auth_cycle, auth_description, start_date, duration, point_info_list]|
+|routine_id|루틴 no|정수형|
 |err|에러 메세지|문자형|
 
 
