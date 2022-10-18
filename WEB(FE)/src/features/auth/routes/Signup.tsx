@@ -1,26 +1,29 @@
-import { useCallback, useState, ChangeEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { Form, Button } from "@/components/Element";
-import { Category } from "@/components/Element/Category";
-import { PreferMiliroutine } from "@/components/Element/PreferMiliroutine";
-import { ReactComponent as Check_green } from "@/assets/check_green.svg"
-import Logo from "@/assets/Logo.svg";
-
+import { useCallback, useState, ChangeEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Form, Button } from '@/components/Element';
+import { Category } from '@/components/Element/Category';
+import { PreferMiliroutine } from '@/components/Element/PreferMiliroutine';
+import { ReactComponent as Check_green } from '@/assets/check_green.svg';
+import Logo from '@/assets/Logo.svg';
 
 export const SignupPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [nickname, setNickname] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [nickname, setNickname] = useState('');
 
   const goToLogin = useCallback(() => {
-    navigate("/auth/login");
+    navigate('/auth/login');
   }, []);
 
   const goToNext = useCallback(() => {
     setStep(1);
+  }, []);
+
+  const goToHome = useCallback(() => {
+    navigate('/');
   }, []);
 
   const onChangeUsername = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -48,27 +51,26 @@ export const SignupPage = () => {
       <div className="flex flex-col items-center">
         <div className="flex flex-col items-center">
           <h2 className="text-black font-bold text-4xl py-6 mt-10">
-            {step === 0 ? "회원가입" : "처음이신가요?"}
+            {step === 0 ? '회원가입' : '처음이신가요?'}
           </h2>
           <h4 className="text-black text-medium">
             {step === 0
-              ? "밀리루틴에 오신 것을 환영합니다"
-              : "추가 정보를 입력해주세요"}
+              ? '밀리루틴에 오신 것을 환영합니다'
+              : '추가 정보를 입력해주세요'}
           </h4>
           {step === 0 ? (
             <div className="py-1 mb-10">
               <span className="text-xs text-gray-500">이미 가입하셨나요?</span>
               <span
                 onClick={goToLogin}
-                className="text-xs text-blue ml-1 cursor-pointer"
-              >
+                className="text-xs text-blue ml-1 cursor-pointer">
                 로그인
               </span>
             </div>
           ) : null}
         </div>
 
-        <div className="container max-w-xs mb-24">
+        <div className="container max-w-sm mb-24">
           {step === 0 ? (
             <>
               <Form
@@ -99,96 +101,67 @@ export const SignupPage = () => {
             </>
           ) : null}
 
+          {step === 1 ? (
+            <>
+              <h2 className="text-black font-bold text-2xl py-6 mt-10">
+                관심 카테고리 설정
+              </h2>
+              <div className="flex flex-col">
+                <div className="flex">
+                  <Category label="학습" />
+                  <Category label="운동" />
+                  <Category label="모닝루틴" />
+                </div>
+                <div className="flex">
+                  <Category label="경제" />
+                  <Category label="자기관리" />
+                  <Category label="진로" />
+                </div>
+                <div className="flex">
+                  <Category label="취미" />
+                  <Category label="정서" />
+                  <Category label="건강" />
+                </div>
+              </div>
+            </>
+          ) : null}
+
+          {step === 1 ? (
+            <>
+              <h2 className="text-black font-bold text-2xl py-1 mt-10">
+                어떤 밀리루틴을 선호하시나요?
+              </h2>
+              <h4 className="text-xs text-gray-500 pb-6">
+                회원가입 후 [좋아요한 밀리루틴] 탭에서 변경할 수 있습니다
+              </h4>
+              <div className="flex flex-col items-stretch">
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+                <PreferMiliroutine label="하루 10번 감사하기" />
+              </div>
+            </>
+          ) : null}
+
           <div className="flex justify-center items-center mt-20">
             {step === 0 ? (
               <Button label="다음 단계로" onClick={goToNext} />
-            ) : null}
+            ) : (
+              <Button label="계정 생성" onClick={goToHome} />
+            )}
           </div>
         </div>
       </div>
     </>
   );
-};
-
-
-
-export const SignupMorePage = () => {
-  return (
-    <div>
-
-      <header>
-        <img src={Logo} className="mx-auto block"></img>
-      </header>
-
-      <div className="text-center mt-24">
-        <p className="text-4xl font-bold ">처음이신가요?</p>
-        <p className="mt-3">추가 정보를 입력해주세요</p>
-      </div>
-
-
-      <div className="text-center mt-24">
-        <span className="text-2xl font-bold mr-36">관심 카테고리 설정</span>
-        <span className="text-green ">최소 1개 이상</span>
-        {/* 최소1개이상을 왼쪽으로 옮겨야 하는데 잘 안됨. + svg도 2 */}
-      </div>
-
-      <div className="flex items-center justify-center">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-1 p-5">
-          <div className="p-1"><Category label="학습" /></div>
-          <div className="p-1"><Category label="운동" /></div>
-          <div className="p-1"><Category label="모닝루틴" /></div>
-          <div className="p-1"><Category label="경제" /></div>
-          <div className="p-1"><Category label="자기관리" /></div>
-          <div className="p-1"><Category label="진로" /></div>
-          <div className="p-1"><Category label="취미" /></div>
-          <div className="p-1"><Category label="정서" /></div>
-          <div className="p-1"><Category label="건강" /></div>
-        </div>
-      </div>
-
-
-      <div className="text-center mt-24">
-        <p className="text-2xl font-bold">선호하는 밀리루틴을 체크해주세요</p>
-        <p className="text-gray-500 text-sm mt-2">회원가입 후 [좋아요한 밀리루틴] 탭에서 변경할 수 있습니다</p>
-      </div>
-
-      <div className="mt-24 grid grid-cols-3 gap-y-1 place-items-center">
-        <div><PreferMiliroutine label="하루 10번 감사하기" /></div>
-        <div><PreferMiliroutine label="백준 한 문제 풀기" /></div>
-        <div><PreferMiliroutine label="물 5컵 마시기" /></div>
-        <div><PreferMiliroutine label="아침 유산소 운동 하기" /></div>
-        <div><PreferMiliroutine label="블로그에 글 포스팅하기" /></div>
-        <div><PreferMiliroutine label="세줄 일기 적기" /></div>
-        <div><PreferMiliroutine label="헬스장 가기" /></div>
-        <div><PreferMiliroutine label="15분 일찍 기상하기" /></div>
-        <div><PreferMiliroutine label="명상하기" /></div>
-        <div><PreferMiliroutine label="매일 한 페이지씩 독서하기" /></div>
-        <div><PreferMiliroutine label="수능특강 진도나가기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-        <div><PreferMiliroutine label="30분 공부하기" /></div>
-      </div>
-
-      <div className="text-center">
-        <Button label="계정 생성" text="text-xl" margin="mb-24 mt-32" onClick={()=>{}}/>
-      </div>
-
-    </div>
-  )
 };
