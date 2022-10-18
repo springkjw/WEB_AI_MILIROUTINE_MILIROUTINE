@@ -5,13 +5,22 @@
 ## ☝️ **프로젝트 실행 방법**
 
 ```shell
+# src/db/.env
+DB_HOST=**.**.**.**
+DB_USER=miliroutine_developer
+DB_PASSWORD=*******
+DB_PORT=*****
+DB_DATABASE=miliroutine_db
+```
+
+```shell
+# src/token/.env
+SECRET_KEY=*********
+```
+
+```shell
 $ cd WEB\(BE\)/
 $ yarn install # node_modules를 설치하는 명령어
-$ export DB_HOST=
-$ export DB_USER=miliroutine_developer
-$ export DB_PASSWORD=
-$ export DB_PORT=
-$ export DB_DATABASE=miliroutine_db
 $ yarn start
 ```
 
@@ -217,127 +226,201 @@ INSERT INTO level_exp
 
 ## 💁‍♂️ **REST API**
 
-`BE 코드를 기반으로 작성하였으며 위 DB 구성표를 바탕으로 작성하였음`
+### **라우팅 표**
 
+| Method & Path                      | 설명                   | 메소드 경로                          |
+| ---------------------------------- | ---------------------- | ------------------------------------ |
+| GET /                              | 현재 사용자 정보       | home.ctrl → output.home              |
+| POST /auth/login                   | 로그인                 | login.ctrl → user.checkUserInfo      |
+| POST /auth/signup                  | 회원가입               | signup.ctrl → user.regist            |
+| GET /popular                       | 인기 밀리루틴 정보     | popular.ctrl → routine.outputPopular |
+| POST /routine/make                 | 밀리루틴 개설하기      | routine.ctrl → routine.make          |
+| GET /routine/:routineId            | 루틴 상세 정보         | routine.ctrl → routine.output        |
+| GET /user/my                       | 나의 밀리루틴 정보     | user.ctrl → output.mine              |
+| GET /user/my/like                  | 좋아요한 밀리루틴 정보 | user.ctrl → output.like              |
+| GET /user/routine/:routineId/auth  | 루틴 인증 정보         | user.ctrl → output.auth              |
+| POST /user/routine/:routineId/auth | 루틴 인증하기          | user.ctrl → routine.auth             |
+| POST /user/settings                | 회원정보 수정          | user.ctrl → user.setInfo             |
+| POST /user/settings/pw             | 비밀번호 변경          | user.ctrl → user.setPassword         |
+| GET /user/pointshop                | 포인트샵 품목 정보     | user.ctrl → output.goods             |
+| POST /user/pointshop               | 포인트샵 품목 구입     | user.ctrl → goods.buy                |
 
-### :eyes: Home
+### **계정 관련**
 
-### GET : /
+1. **`GET /` : 현재 사용자 정보**
 
-> JSON BODY
+- Response Body (200 OK, 비로그인 상태)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | isLogin | false | |
 
-**X**
+- Response Body (200 OK, 로그인 상태)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | isLogin | true | |
+  | user | object | 해당 유저의 `user` 테이블 정보 |
 
-> Return
+2. **`POST /auth/login` : 로그인**
 
-|return|내용|설명|
-|------|---|---|
-|success|성공여부|boolean (true/false)|
-|isLogin|로그인 여부|boolean (true/false)|
-|userInfo|현재 로그인된 사용자 정보|json {type:"JWT", no:(사용자no), id:(사용자id), name:(사용자이름)}|
-|err|에러 메세지|문자형|
+- Request Body (JSON)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | id | string | |
+  | pw | string | |
 
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | token | string | JWT 토큰 |
+  | user | object | 해당 유저의 `user` 테이블 정보 |
 
-### :eyes: Login
+- Response Body (400 Bad Request)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | false | |
+  | err | string | 에러 메시지 |
 
-### POST : /auth/login
+3. **`POST /auth/signup` : 회원가입**
 
-> JSON BODY
+- Request Body (JSON)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | id | string | |
+  | pw | string | |
+  | email | string | |
+  | name | string | 닉네임 |
+  | category | array | 관심 카테고리 ex) ["study", "health"] |
+  | likeRoutine | array | 선호하는 밀리루틴 ex) [21, 34] |
 
-|body|내용|설명|
-|------|---|---|
-|id|아이디|문자형|
-|pw|비밀번호|문자형|
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | token | string | JWT 토큰 |
+  | user | array of object | {id, pw(hashed), email, name, salt} |
 
-> Return
+- Response Body (400 Bad Request)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | false | |
+  | err | string | 에러 메시지 |
 
-|return|내용|설명|
-|------|---|---|
-|success|성공여부|boolean (true/false)|
-|token|jwt토큰|문자형|
-|user|사용자 정보|데이터 팩 {no, id, pw, salt, email, nickname, profile_img, background_img, point, exp} (ex: user.no, user.id 등으로 접근)|
-|err|에러 메세지|문자형|
+4. **`POST /user/settings` : 회원정보 수정**
 
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.no 정보 추출 |
 
-### :eyes: Signup
+- Request Body (JSON)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | name | string | |
+  | category | array | 관심 카테고리 ex) ["study", "health"] |
 
-### POST : /auth/signup
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
 
-> JSON BODY
+- Response Body (400 Bad Request)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | false | |
+  | isLogin | boolean | |
+  | err | string | 에러 메시지 |
 
-|body|내용|설명|
-|------|---|---|
-|id|아이디|문자형|
-|pw|비밀번호|문자형|
-|email|이메일|문자형|
-|name|이름|문자형|
-|category|관심 카테고리|카테고리 이름이 저장되어 있는 배열 (ex. ['study', 'health'])|
-|likeRoutine|선호하는 밀리루틴|루틴 아이디가 저장되어 있는 배열 (ex. [21, 34])|
+5. **`POST /user/settings/pw` : 비밀번호 변경**
 
-> Return
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.pw, user.salt 정보 추출 |
 
-|return|내용|설명|
-|------|---|---|
-|success|성공여부|boolean (true/false)|
-|token|jwt토큰|문자형|
-|user|사용자 정보|배열 [userId, userPassword, userEmail, userName, salt]|
-|err|에러 메세지|문자형|
+- Request Body (JSON)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | pw | string | 새로운 비밀번호 |
 
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
 
-### :eyes: Routine
+- Response Body (400 Bad Request)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | false | 기존 비밀번호와 동일할 경우, 예외적으로 true |
+  | isLogin | boolean | |
+  | err | string | 에러 메시지 |
 
-### POST : /routine/make
+### **루틴 관련**
 
-> JSON BODY
+1. **`GET /popular` : 인기 밀리루틴 정보**
 
-|body|내용|설명|
-|------|---|---|
-|name|밀리루틴 이름|문자형|
-|category|밀리루틴 카테고리|문자형|
-|fileUrl|루틴 대표 이미지 저장 url|문자형|
-|auth_cycle|인증 주기|정수형|
-|auth_description|참여 및 인증방법|인증 방법이 들어가있는 배열_1단계~5단계 (ex. ['매일 아침 8시에 기상 인증', '날짜 캡처']|
-|start_date|루틴 시작일|yyyy-mm-dd|
-|duration|루틴 진행 기간|정수형|
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | rankedRoutine | array of array | 참여자 수 내림차순 ex) [[routine_id, 참여자수], ...] |
 
-> Return
+2. **`POST /routine/make` : 밀리루틴 개설하기**
 
-|return|내용|설명|
-|------|---|---|
-|success|성공여부|boolean (true/false)|
-|isLogin|로그인 여부|boolean (true/false)|
-|routine|만든 루틴 정보|배열 [host(만든 유저 no), name, category, image, auth_cycle, auth_description, start_date, duration, point_info_list]|
-|err|에러 메세지|문자형|
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.no 정보 추출 |
 
+- Request Body (JSON)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | name | string | |
+  | category | string | |
+  | fileUrl | URL string | 대표 이미지 |
+  | auth_cycle | integer | 주 x회 |
+  | auth_description | array | 인증 방법 ex) ["7시 전에 일어나세요", "8시 전에 인증하세요"] |
+  | start_date | DATE string | 루틴 시작일 |
+  | duration | integer | 총 x주 |
+  | point_info_list | array of object | 포인트 정보 ex) [{'type': "every_week", 'point': 20}, ...] |
 
-### GET : /routine/:routineId
+- Response Body (201 Created)
 
-> JSON BODY
+  | key     | value 타입 | 설명                              |
+  | ------- | ---------- | --------------------------------- |
+  | success | true       |                                   |
+  | routine | object     | 해당 루틴의 `routine` 테이블 정보 |
 
-**X**
+- Response Body (400 Bad Request)
+  | key | value 타입 | 설명 |
+  | ------- | ---------- | --------------------------------- |
+  | success | false | |
+  | isLogin | boolean | |
+  | err | string | 에러 메시지 |
 
-> Return
+3. **`GET /routine/:routineId` : 루틴 상세 정보**
 
-|return|내용|설명|
-|------|---|---|
-|success|성공여부|boolean (true/false)|
-|routine_id|루틴 no|정수형|
-|routine|만든 루틴 정보|데이터 팩 {id, host, name, ceategory, thumbnail_img, auth_cycle, auth_Description_list, start_date, duration, point_info_list}|
-|err|에러 메세지|문자형|
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | routine_id | integer | 루틴 고유번호 |
+  | routine | object | 해당 루틴의 `routine` 테이블 정보 |
 
+4. **`GET /user/my` : 나의 밀리루틴 정보**
 
-### :eyes: Popular
+5. **`GET /user/my/like` : 좋아요한 밀리루틴 정보**
 
-### GET : /popular
+### **인증 관련**
 
-> JSON BODY
+1. **`GET /user/routine/:routineId/auth` : 루틴 인증 정보**
 
-**X**
+2. **`POST /user/routine/:routineId/auth` : 루틴 인증하기**
 
-> Return
+### **포인트샵 관련**
 
-|return|내용|설명|
-|------|---|---|
-|success|성공여부|boolean (true/false)|
-|rankedRoutine|랭킹대로 정렬된 루틴|참가자가 많은 순으로 정렬된 루틴 배열 / 배열의 0번째 요소가 routine_id, 1번째 요소가 참가자 수 / [(루틴 아이디), (참가자 수)]|
-|err|에러 메세지|문자형|
+1. **`GET /user/pointshop` : 포인트샵 품목 정보**
+
+2. **`POST /user/pointshop` : 포인트샵 품목 구입**
