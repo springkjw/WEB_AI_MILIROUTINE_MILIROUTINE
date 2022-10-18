@@ -14,6 +14,13 @@ const output = {
 	popular : async (req, res) => {
 		const routines = await data.user_routine.getAll();
 		
+		if(routines.length == 0){
+			res.status(400).json({
+				success : false,
+				err : '루틴이 없습니다!'
+			})
+		}
+		
 		var JoinedRoutine = [];
 		
 		for(const routine of routines){
@@ -33,7 +40,7 @@ const output = {
 					JoinedRoutine[index][1]++;
 				}
 				else{
-					JoinedRoutine.push([routine.routine_id, 0]);
+					JoinedRoutine.push([routine.routine_id, 1]);
 				}
 			}
 		}
@@ -45,7 +52,6 @@ const output = {
 			rankedRoutine : JoinedRoutine // 참가자가 많은 순으로 배치
 			// 배열의 0번째 요소가 routine_id, 1번째 요소가 참가자 수
 		})
-		
 	} 
 }
 

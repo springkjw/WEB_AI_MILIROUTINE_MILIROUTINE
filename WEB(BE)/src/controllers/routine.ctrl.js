@@ -47,21 +47,12 @@ const routine = {
 			})
 		}
 		
-		var auth_description_list = [req.body.auth_description_1, req.body.auth_description_2, req.body.auth_description_3, req.body.auth_description_4, req.body.auth_description_5];
-		
-		let i = 0;
-		for(const item of auth_description_list){
-			if(!item){
-				auth_description_list.length = i;
-				break;
-			}
-			i++;
-		}
+		var auth_description_list = req.body.auth_description;
 		
 		const host = data.user.get('id',user.getId(req, res)).no;
 		const name = req.body.name;
 		const category = req.body.category;
-		const image = req.body.fileUrl; //`/images/${req.file.filename}`
+		const image = req.body.fileUrl; 
 		const auth_cycle = req.body.auth_cycle;
 		const auth_description = JSON.stringify(auth_description_list);
 		const start_date = req.body.start_date;
