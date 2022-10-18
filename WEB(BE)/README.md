@@ -216,3 +216,75 @@ INSERT INTO level_exp
 ```
 
 ## 💁‍♂️ **REST API**
+
+### :eyes: Login
+
+### POST : /auth/login
+
+> JSON BODY
+
+|body|내용|설명|
+|------|---|---|
+|id|아이디|문자형|
+|pw|비밀번호|문자형|
+
+> Return
+
+|return|내용|설명|
+|------|---|---|
+|success|성공여부|boolean (true/false)|
+|token|jwt토큰|문자형|
+|user|사용자 정보|데이터 팩 {no, id, pw, salt, email, nickname, profile_img, background_img, point, exp} (ex: user.no, user.id 등으로 접근)|
+|err|에러 메세지|문자형|
+
+
+### :eyes: Signup
+
+### POST : /auth/signup
+
+> JSON BODY
+
+|body|내용|설명|
+|------|---|---|
+|id|아이디|문자형|
+|pw|비밀번호|문자형|
+|email|이메일|문자형|
+|name|이름|문자형|
+|category|관심 카테고리|카테고리 이름이 저장되어 있는 배열 (ex. ['study', 'health'])|
+|likeRoutine|선호하는 밀리루틴|루틴 아이디가 저장되어 있는 배열 (ex. [21, 34])|
+
+> Return
+
+|return|내용|설명|
+|------|---|---|
+|success|성공여부|boolean (true/false)|
+|token|jwt토큰|문자형|
+|user|사용자 정보|배열 [userId, userPassword, userEmail, userName, salt]|
+|err|에러 메세지|문자형|
+
+
+### :eyes: Routine
+
+### POST : /routine/make
+
+> JSON BODY
+
+|body|내용|설명|
+|------|---|---|
+|id|아이디|문자형|
+|pw|비밀번호|문자형|
+|email|이메일|문자형|
+|name|이름|문자형|
+|category|관심 카테고리|카테고리 이름이 저장되어 있는 배열 (ex. ['study', 'health'])|
+|likeRoutine|선호하는 밀리루틴|루틴 아이디가 저장되어 있는 배열 (ex. [21, 34])|
+
+> Return
+
+|return|내용|설명|
+|------|---|---|
+|success|성공여부|boolean (true/false)|
+|token|jwt토큰|문자형|
+|user|사용자 정보|배열 [userId, userPassword, userEmail, userName, salt]|
+|err|에러 메세지|문자형|
+
+
