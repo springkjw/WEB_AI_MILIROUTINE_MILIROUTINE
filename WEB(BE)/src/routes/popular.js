@@ -3,6 +3,6 @@ const router = express.Router();
 const ctrl = require('../controllers/popular.ctrl');
 
 
-router.get('/', ctrl.routine.outputPopular);
+router.get('/', ctrl.output.popular);
 
 module.exports = router;

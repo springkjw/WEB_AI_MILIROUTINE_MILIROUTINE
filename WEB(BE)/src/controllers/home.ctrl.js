@@ -1,7 +1,7 @@
 const jwt = require('../token/jwt');
 const data = require('../models/index');
 
-const ouput = {
+const output = {
 	home : (req, res) => {
 		if(!user.isToken(req, res)){
 			return res.json({
@@ -42,4 +42,6 @@ const user = {
 	}
 }
 
-module.exports = {user};
+module.exports = {
+	output
+};

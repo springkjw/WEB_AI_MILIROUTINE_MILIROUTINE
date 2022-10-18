@@ -1,32 +1,54 @@
 const data = require('../models/index');
-const jwt = require('../token/jwt');
 
-const maxStep = 5;
-
-const user = {
-	isToken : (req, res) => {
-		try{
-			if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
-				return true;
-			}
-
-			else{
-				return false;
-			}
-		}
-		
-		catch(err){
-			throw new Error(err);
-		}
+function sortFunction(a, b) {
+	if(a[1] == b[1]){
+		return 0;
+	}
+	
+	else{
+		return (a[1] > b[1]) ? -1 : 1;
 	}
 }
 
-const routine = {
-	outputPopular : (req, res) => {
+const output = {
+	popular : async (req, res) => {
+		const routines = await data.user_routine.getAll();
+		
+		var JoinedRoutine = [];
+		
+		for(const routine of routines){
+			var isRoutine = false;
+			var index;
+			
+			if(routine.type == 'join'){
+				for(var i = 0; i<JoinedRoutine.length; ++i){
+					if(JoinedRoutine[i][0] == routine.routine_id){
+						isRoutine = true;
+						index = i;
+						break;
+					}
+				}
+				
+				if(isRoutine){
+					JoinedRoutine[index][1]++;
+				}
+				else{
+					JoinedRoutine.push([routine.routine_id, 0]);
+				}
+			}
+		}
+		
+		JoinedRoutine.sort(sortFunction);
+		
+		res.json({
+			success : true,
+			rankedRoutine : JoinedRoutine // 참가자가 많은 순으로 배치
+			// 배열의 0번째 요소가 routine_id, 1번째 요소가 참가자 수
+		})
 		
 	} 
 }
 
 module.exports = {
-	routine
+	output
 }

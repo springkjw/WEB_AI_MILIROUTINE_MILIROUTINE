@@ -8,9 +8,7 @@ const routine = require('./routine');
 const user = require('./user');
 const popular = require('./popular');
 
-router.get('/', function (req, res) {
-  console.log('home');
-});
+router.get('/', ctrl.output.home);
 
 router.use('/auth/login', login);
 router.use('/auth/signup', signup);
