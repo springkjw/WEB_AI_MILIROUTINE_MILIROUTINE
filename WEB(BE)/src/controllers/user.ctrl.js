@@ -31,9 +31,11 @@ const createHashedPasswordWithSalt = (plainPassword, salt) =>
 const output = {
 	mine : async (req, res)=>{
 		if(!user.isToken(req, res)){
-			return res.json({
-				err : '로그인을 해주세요!',
-				isLogin : false
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
+				
 			})
 		}
 		
@@ -45,15 +47,18 @@ const output = {
 		const param = await data.routine.get('host', host);
 		
 		res.json({
+			success : true,
 			routine : param
 		})
 	},
 	
 	like : async (req, res)=>{
 		if(!user.isToken(req, res)){
-			return res.status(403).json({
-				err : '로그인을 해주세요!',
-				isLogin : false
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
+				
 			})
 		}
 		
@@ -70,7 +75,7 @@ const output = {
 		}
 		
 		res.json({
-			msg : '좋아요한 루틴 추출 완료!',
+			success : true,
 			likeRoutineID : likeRoutineId
 		})
 	},
@@ -79,6 +84,7 @@ const output = {
 		const routine = data.routine.get('id', req.params.routineId);
 		
 		res.json({
+			success : true,
 			routine : routine
 		})
 	},
@@ -86,8 +92,9 @@ const output = {
 	goods : async (req, res) => {
 		if(!user.isToken(req, res)){
 			return res.status(403).json({
-				err : '로그인을 해주세요!',
-				isLogin : false
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
 			})
 		}
 		
@@ -100,6 +107,7 @@ const output = {
 		
 		
 		res.json({
+			success : true,
 			userPoint : userPoint,
 			goods : goods	 // MySQL Server 통일 Issue 확인
 			// id, name, description, thubnail_img,price 
@@ -110,9 +118,10 @@ const output = {
 const user = {
 	setInfo : (req, res) =>{
 		if(!user.isToken(req, res)){
-			return res.status(403).json({
-				err : '로그인을 해주세요!',
-				isLogin : false
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
 			})
 		}
 		
@@ -123,7 +132,8 @@ const user = {
 			data.user.update('nickname', req.body.name, decoded.id);
 		}
 		else{
-			return res.status(401).json({
+			return res.status(400).json({
+				success : false,
 				err : '닉네임을 입력해주세요!'
 			})
 		}
@@ -132,26 +142,30 @@ const user = {
 			data.user_category.update('category', req.body.category, decoded.no);
 		}
 		else{
-			return res.satus(401).json({
+			return res.satus(400).json({
+				success : false,
 				err : '카테고리를 선택해주세요!'
 			})
 		}
 		
 		return res.json({
-			msg : '닉네임 수정 완료!'
+			success : true
 		})
 	},
 	
 	setPassword : async (req, res) => {
 		if(!user.isToken(req, res)){
-			return res.status(403).json({
-				err : '로그인을 해주세요!',
-				isLogin : false
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
+				
 			})
 		}
 		
 		if(!req.body.pw){
-			return res.status(401).json({
+			return res.status(400).json({
+				success : false,
 				err : '새로운 비밀번호를 입력해주세요!'
 			})
 		}
@@ -168,12 +182,14 @@ const user = {
 			data.user.update('salt', salt, decoded.id);
 			
 			return res.json({
+				success : true,
 				msg : '비밀번호 수정 완료!'
 			})
 		}
 		
 		else{
-			return res.status(401).json({
+			return res.status(400).json({
+				success : true,
 				err : '원래 비밀번호와 같습니다!'
 			})
 		}
@@ -191,8 +207,8 @@ const user = {
 		}
 		
 		catch(err){
-			console.log(err);
-			return false;
+			res.status(400);
+			throw new Error("로그인이 되어있지 않거나 토큰이 만료되었습니다!");
 		}
 	}
 }
@@ -201,9 +217,10 @@ const routine = {
 	auth : (req, res) => {
 		
 		if(!user.isToken(req, res)){
-			return res.status(403).json({
-				err : '로그인을 해주세요!',
-				isLogin : false
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
 			})
 		}
 		
@@ -223,15 +240,57 @@ const routine = {
 			const param = [user_no, routine_id, week, day, date, img, text]
 			data.auth.add(param);
 			
-			return res.json({
-				msg : 'routine 인증 완료!'
+			res.json({
+				success : true
 			})
 		}
-		catch{
-			return res.status(401).json({
-				msg : 'routine 인증 실패!'
+		catch(err){
+			res.status(400);
+			throw new Error(err);
+		}
+	}
+}
+
+const goods = {
+	buy : async (req, res) => {
+		if(!user.isToken(req, res)){
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
 			})
 		}
+		
+		const token = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.decode(token)
+		
+		const userNo = decoded.id;
+		const goodsId = req.body.goods_id;
+		
+		
+		const date = new Date();
+		const year = date.getFullYear();
+		const month = ('0' + (date.getMonth() + 1)).slice(-2);
+		const day = ('0' + date.getDate()).slice(-2);
+		const dateStr = year + '-' + month + '-' + day;
+		
+		const hours = ('0' + date.getHours()).slice(-2);
+		const minutes = ('0' + date.getMinutes()).slice(-2);
+		const seconds = ('0' + date.getSeconds()).slice(-2);
+		const timeStr = hours + ':' + minutes + ':' + seconds;
+		
+		const dayStr = dateStr+' '+timeStr
+		
+		const param = [userNo, goodsId, dayStr];
+		
+	  	data.user_goods.add(param);
+		
+		const goods = await data.goods.get('id', goodsId);
+		
+		res.json({
+			success : true,
+			goods : goods
+		})
 	}
 }
 

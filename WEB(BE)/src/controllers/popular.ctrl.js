@@ -16,10 +16,8 @@ const user = {
 		}
 		
 		catch(err){
-			console.log(err);
-			return false;
+			throw new Error(err);
 		}
-		
 	}
 }
 

@@ -5,6 +5,7 @@ const ouput = {
 	home : (req, res) => {
 		if(!user.isToken(req, res)){
 			return res.json({
+				success : true,
 				isLogin : false
 			})
 		}
@@ -15,8 +16,9 @@ const ouput = {
 		const userInfo = data.user.get('id', decoded.id);
 		
 		res.json({
-			user : userInfo,
-			isLogin : true
+			success : true,
+			isLogin : true,
+			user : userInfo
 		})
 	}
 }
@@ -34,8 +36,7 @@ const user = {
 		}
 		
 		catch(err){
-			res.status(400);
-			throw new Error("로그인이 되어있지 않거나 토큰이 만료되었습니다!");
+			throw new Error(err);
 		}
 		
 	}
