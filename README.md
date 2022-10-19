@@ -87,7 +87,7 @@ git clone https://github.com/osamhack2022/WEB_AI_MILIROUTINE_MILIROUTINE.git
 
 > 💡 더 자세한 내용은 세부 폴더의 `README.md`에서 확인 바랍니다!
 >
-> - 기획/디자인 [README]()
+> - 기획/디자인 [README](assets/README.md)
 > - FE [README](<WEB(FE)/README.md>)
 > - BE [README](<WEB(BE)/README.md>)
 > - AI [README](AI/README.md)
