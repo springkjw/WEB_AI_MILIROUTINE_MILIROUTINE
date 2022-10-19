@@ -1,4 +1,4 @@
-# **밀리루틴(MILIROUTINE) - 군생활 루틴 공유**
+# **밀리루틴(MILIROUTINE) - 군생활 루틴 **
 
 <div align="center">
     <img src="assets/logo.png" alt="MILIROUTINE Logo" width="60%" height="60%">
