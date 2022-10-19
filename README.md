@@ -1,7 +1,7 @@
 # **밀리루틴(MILIROUTINE) - 군생활 루틴 공유**
 
 <div align="center">
-    <img src="logo.png" alt="MILIROUTINE Logo" width="60%" height="60%">
+    <img src="assets/logo.png" alt="MILIROUTINE Logo" width="60%" height="60%">
     <p>군대에서 시작하는, 나의 사소한 루틴 쌓기.<br>지키고 싶은 밀리루틴을 만들고, 함께 인증해보세요!<br><br>
         <a href="https://miliroutine.kr">https://miliroutine.kr</a>
     </p>
@@ -86,6 +86,11 @@ git clone https://github.com/osamhack2022/WEB_AI_MILIROUTINE_MILIROUTINE.git
 - `Docker-compose`
 
 > 💡 더 자세한 내용은 세부 폴더의 `README.md`에서 확인 바랍니다!
+>
+> - 기획/디자인 [README](assets/README.md)
+> - FE [README](<WEB(FE)/README.md>)
+> - BE [README](<WEB(BE)/README.md>)
+> - AI [README](AI/README.md)
 
 ## 👋 **Team Info | 팀 정보**
 
