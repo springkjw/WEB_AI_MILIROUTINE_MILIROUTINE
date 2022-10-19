@@ -245,9 +245,26 @@ INSERT INTO level_exp
 | GET /user/pointshop                | 포인트샵 품목 정보     | user.ctrl → output.goods             |
 | POST /user/pointshop               | 포인트샵 품목 구입     | user.ctrl → goods.buy                |
 
+> Request Body와 Response Body는 JSON 형식으로만 구성됩니다.
+
+#### 오류 Response Body
+
+- 400 Bad Request
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | false | |
+  | err | string | 에러 메시지 |
+
+- 403 Forbidden
+  | key | value 타입 | 설명 |
+  | ------- | ---------- | --- |
+  | success | false | |
+  | isLogin | false | |
+  | err | string | 에러 메시지 |
+
 ### **계정 관련**
 
-1. **`GET /` : 현재 사용자 정보**
+#### 1. **`GET /` : 현재 사용자 정보**
 
 - Response Body (200 OK, 비로그인 상태)
   | key | value 타입 | 설명 |
@@ -262,9 +279,9 @@ INSERT INTO level_exp
   | isLogin | true | |
   | user | object | 해당 유저의 `user` 테이블 정보 |
 
-2. **`POST /auth/login` : 로그인**
+#### 2. **`POST /auth/login` : 로그인**
 
-- Request Body (JSON)
+- Request Body
   | key | value 타입 | 설명 |
   | --- | ---------- | ---- |
   | id | string | |
@@ -277,15 +294,9 @@ INSERT INTO level_exp
   | token | string | JWT 토큰 |
   | user | object | 해당 유저의 `user` 테이블 정보 |
 
-- Response Body (400 Bad Request)
-  | key | value 타입 | 설명 |
-  | --- | ---------- | ---- |
-  | success | false | |
-  | err | string | 에러 메시지 |
+#### 3. **`POST /auth/signup` : 회원가입**
 
-3. **`POST /auth/signup` : 회원가입**
-
-- Request Body (JSON)
+- Request Body
   | key | value 타입 | 설명 |
   | --- | ---------- | ---- |
   | id | string | |
@@ -302,20 +313,14 @@ INSERT INTO level_exp
   | token | string | JWT 토큰 |
   | user | array of object | {id, pw(hashed), email, name, salt} |
 
-- Response Body (400 Bad Request)
-  | key | value 타입 | 설명 |
-  | --- | ---------- | ---- |
-  | success | false | |
-  | err | string | 에러 메시지 |
-
-4. **`POST /user/settings` : 회원정보 수정**
+#### 4. **`POST /user/settings` : 회원정보 수정**
 
 - Request Headers
   | header | value 타입 | 설명 |
   | -- | -- | -- |
   | Authorization | JWT 토큰 | user.no 정보 추출 |
 
-- Request Body (JSON)
+- Request Body
   | key | value 타입 | 설명 |
   | --- | ---------- | ---- |
   | name | string | |
@@ -326,21 +331,14 @@ INSERT INTO level_exp
   | --- | ---------- | ---- |
   | success | true | |
 
-- Response Body (400 Bad Request)
-  | key | value 타입 | 설명 |
-  | --- | ---------- | ---- |
-  | success | false | |
-  | isLogin | boolean | |
-  | err | string | 에러 메시지 |
-
-5. **`POST /user/settings/pw` : 비밀번호 변경**
+#### 5. **`POST /user/settings/pw` : 비밀번호 변경**
 
 - Request Headers
   | header | value 타입 | 설명 |
   | -- | -- | -- |
   | Authorization | JWT 토큰 | user.pw, user.salt 정보 추출 |
 
-- Request Body (JSON)
+- Request Body
   | key | value 타입 | 설명 |
   | --- | ---------- | ---- |
   | pw | string | 새로운 비밀번호 |
@@ -350,16 +348,9 @@ INSERT INTO level_exp
   | --- | ---------- | ---- |
   | success | true | |
 
-- Response Body (400 Bad Request)
-  | key | value 타입 | 설명 |
-  | --- | ---------- | ---- |
-  | success | false | 기존 비밀번호와 동일할 경우, 예외적으로 true |
-  | isLogin | boolean | |
-  | err | string | 에러 메시지 |
-
 ### **루틴 관련**
 
-1. **`GET /popular` : 인기 밀리루틴 정보**
+#### 1. **`GET /popular` : 인기 밀리루틴 정보**
 
 - Response Body (200 OK)
   | key | value 타입 | 설명 |
@@ -367,14 +358,14 @@ INSERT INTO level_exp
   | success | true | |
   | rankedRoutine | array of array | 참여자 수 내림차순 ex) [[routine_id, 참여자수], ...] |
 
-2. **`POST /routine/make` : 밀리루틴 개설하기**
+#### 2. **`POST /routine/make` : 밀리루틴 개설하기**
 
 - Request Headers
   | header | value 타입 | 설명 |
   | -- | -- | -- |
   | Authorization | JWT 토큰 | user.no 정보 추출 |
 
-- Request Body (JSON)
+- Request Body
   | key | value 타입 | 설명 |
   | --- | ---------- | ---- |
   | name | string | |
@@ -387,20 +378,12 @@ INSERT INTO level_exp
   | point_info_list | array of object | 포인트 정보 ex) [{'type': "every_week", 'point': 20}, ...] |
 
 - Response Body (201 Created)
-
-  | key     | value 타입 | 설명                              |
-  | ------- | ---------- | --------------------------------- |
-  | success | true       |                                   |
-  | routine | object     | 해당 루틴의 `routine` 테이블 정보 |
-
-- Response Body (400 Bad Request)
   | key | value 타입 | 설명 |
-  | ------- | ---------- | --------------------------------- |
-  | success | false | |
-  | isLogin | boolean | |
-  | err | string | 에러 메시지 |
+  | ------- | ---------- | ---------- |
+  | success | true | |
+  | routine | object | 해당 루틴의 `routine` 테이블 정보 |
 
-3. **`GET /routine/:routineId` : 루틴 상세 정보**
+#### 3. **`GET /routine/:routineId` : 루틴 상세 정보**
 
 - Response Body (200 OK)
   | key | value 타입 | 설명 |
@@ -409,18 +392,102 @@ INSERT INTO level_exp
   | routine_id | integer | 루틴 고유번호 |
   | routine | object | 해당 루틴의 `routine` 테이블 정보 |
 
-4. **`GET /user/my` : 나의 밀리루틴 정보**
+#### 4. **`GET /user/my` : 나의 밀리루틴 정보**
 
-5. **`GET /user/my/like` : 좋아요한 밀리루틴 정보**
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.no 정보 추출 |
+
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | routine | object | 해당 루틴의 `routine` 테이블 정보 |
+
+> // routine이 하나가 아니므로 수정 필요
+
+#### 5. **`GET /user/my/like` : 좋아요한 밀리루틴 정보**
+
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.no 정보 추출 |
+
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | likeRoutineId | array | 좋아요한 밀리루틴 ex) [21, 34] |
 
 ### **인증 관련**
 
-1. **`GET /user/routine/:routineId/auth` : 루틴 인증 정보**
+#### 1. **`GET /user/routine/:routineId/auth` : 루틴 인증 정보**
 
-2. **`POST /user/routine/:routineId/auth` : 루틴 인증하기**
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.no 정보 추출 |
+
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | auth_list | array of object | 지금까지의 인증 정보 |
+
+> // auth_list를 넣는 방향으로 수정해야 할듯
+
+#### 2. **`POST /user/routine/:routineId/auth` : 루틴 인증하기**
+
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.no 정보 추출 |
+
+- Request Body
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | week | integer | x주차 |
+  | day | integer | x회차 |
+  | date | DATE string | 인증 일자 |
+  | img | URL string | 인증 이미지 URL |
+  | text | string | 인증 글 |
+
+- Response Body (201 Created)
+  | key | value 타입 | 설명 |
+  | ------- | ---------- | ----- |
+  | success | true | |
 
 ### **포인트샵 관련**
 
-1. **`GET /user/pointshop` : 포인트샵 품목 정보**
+#### 1. **`GET /user/pointshop` : 포인트샵 품목 정보**
 
-2. **`POST /user/pointshop` : 포인트샵 품목 구입**
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.point 정보 추출 |
+
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | userPoint | integer | |
+  | goods | array of object | `goods` 테이블 전체 정보 |
+
+#### 2. **`POST /user/pointshop` : 포인트샵 품목 구입**
+
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.no, user.point 정보 추출 |
+
+- Request Body
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |  
+  | goods_id | integer | |
+
+- Response Body (201 Created)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | goods | object | 구매한 품목의 `goods` 테이블 정보 |
