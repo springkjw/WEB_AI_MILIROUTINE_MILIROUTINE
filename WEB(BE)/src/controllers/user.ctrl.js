@@ -4,29 +4,43 @@ const crypto = require('crypto');
 const STRETCHINGKEY = 9999;
 
 const createSalt = () =>
-	new Promise((resolve,reject)=>{
-		crypto.randomBytes(64, (err,buf)=>{
-			if(err) reject(err);
-			resolve(buf.toString('base64'));
-		});
-});
+  new Promise((resolve, reject) => {
+    crypto.randomBytes(64, (err, buf) => {
+      if (err) reject(err);
+      resolve(buf.toString('base64'));
+    });
+  });
 
 const createHashedPassword = (plainPassword) =>
-    new Promise(async (resolve, reject) => {
-        const salt = await createSalt(); 
-        crypto.pbkdf2(plainPassword, salt, STRETCHINGKEY, 64, 'sha512', (err, key) => {
-            if (err) reject(err);
-            resolve({ password: key.toString('base64'), salt });
-        });
-    }); 
+  new Promise(async (resolve, reject) => {
+    const salt = await createSalt();
+    crypto.pbkdf2(
+      plainPassword,
+      salt,
+      STRETCHINGKEY,
+      64,
+      'sha512',
+      (err, key) => {
+        if (err) reject(err);
+        resolve({ password: key.toString('base64'), salt });
+      }
+    );
+  });
 
 const createHashedPasswordWithSalt = (plainPassword, salt) =>
-    new Promise(async (resolve, reject) => {
-        crypto.pbkdf2(plainPassword, salt, STRETCHINGKEY, 64, 'sha512', (err, key) => {
-            if (err) reject(err);
-            resolve(key.toString('base64'));
-        });
-    });
+  new Promise(async (resolve, reject) => {
+    crypto.pbkdf2(
+      plainPassword,
+      salt,
+      STRETCHINGKEY,
+      64,
+      'sha512',
+      (err, key) => {
+        if (err) reject(err);
+        resolve(key.toString('base64'));
+      }
+    );
+  });
 
 const output = {
 	mine : async (req, res)=>{
@@ -124,187 +138,181 @@ const output = {
 }
 
 const user = {
-	setInfo : (req, res) =>{
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
-		
-		if(req.body.name){
-			data.user.update('nickname', req.body.name, decoded.id);
-		}
-		else{
-			return res.status(400).json({
-				success : false,
-				err : '닉네임을 입력해주세요!'
-			})
-		}
-		
-		if(req.body.category){
-			data.user_category.update('category', req.body.category, decoded.no);
-		}
-		else{
-			return res.satus(400).json({
-				success : false,
-				err : '카테고리를 선택해주세요!'
-			})
-		}
-		
-		return res.json({
-			success : true
-		})
-	},
-	
-	setPassword : async (req, res) => {
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-				
-			})
-		}
-		
-		if(!req.body.pw){
-			return res.status(400).json({
-				success : false,
-				err : '새로운 비밀번호를 입력해주세요!'
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
-		
-		const originalPw = await createHashedPasswordWithSalt(data.user.get('id', decoded.id).pw, data.user.get('id', decoded.id).salt) ;
-		
-		if(req.body.pw != originalPw){
-			const { password, salt } = await createHashedPassword(req.body.pw);
-			
-			data.user.update('pw', password, decoded.id);
-			data.user.update('salt', salt, decoded.id);
-			
-			return res.json({
-				success : true,
-				msg : '비밀번호 수정 완료!'
-			})
-		}
-		
-		else{
-			return res.status(400).json({
-				success : true,
-				err : '원래 비밀번호와 같습니다!'
-			})
-		}
-	},
-	
-	isToken : (req, res) => {
-		try{
-			if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
-				return true;
-			}
+  setInfo: (req, res) => {
+    if (!user.isToken(req, res)) {
+      return res.status(400).json({
+        success: false,
+        isLogin: false,
+        err: '로그인을 해주세요!',
+      });
+    }
 
-			else{
-				return false;
-			}
-		}
-		
-		catch(err){
-			res.status(400);
-			throw new Error("로그인이 되어있지 않거나 토큰이 만료되었습니다!");
-		}
-	}
-}
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.decode(token);
+
+    if (req.body.name) {
+      data.user.update('nickname', req.body.name, decoded.id);
+    } else {
+      return res.status(400).json({
+        success: false,
+        err: '닉네임을 입력해주세요!',
+      });
+    }
+
+    if (req.body.category) {
+      data.user_category.update('category', req.body.category, decoded.no);
+    } else {
+      return res.satus(400).json({
+        success: false,
+        err: '카테고리를 선택해주세요!',
+      });
+    }
+
+    return res.json({
+      success: true,
+    });
+  },
+
+  setPassword: async (req, res) => {
+    if (!user.isToken(req, res)) {
+      return res.status(400).json({
+        success: false,
+        isLogin: false,
+        err: '로그인을 해주세요!',
+      });
+    }
+
+    if (!req.body.pw) {
+      return res.status(400).json({
+        success: false,
+        err: '새로운 비밀번호를 입력해주세요!',
+      });
+    }
+
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.decode(token);
+
+    const originalPw = await createHashedPasswordWithSalt(
+      data.user.get('id', decoded.id).pw,
+      data.user.get('id', decoded.id).salt
+    );
+
+    if (req.body.pw != originalPw) {
+      const { password, salt } = await createHashedPassword(req.body.pw);
+
+      data.user.update('pw', password, decoded.id);
+      data.user.update('salt', salt, decoded.id);
+
+      return res.json({
+        success: true,
+        msg: '비밀번호 수정 완료!',
+      });
+    } else {
+      return res.status(400).json({
+        success: true,
+        err: '원래 비밀번호와 같습니다!',
+      });
+    }
+  },
+
+  isToken: (req, res) => {
+    try {
+      if (
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[1]
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      res.status(400);
+      throw new Error('로그인이 되어있지 않거나 토큰이 만료되었습니다!');
+    }
+  },
+};
 
 const routine = {
-	auth : (req, res) => {
-		
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
-		
-		try{
-			const user_no = decoded.no;
-			const routine_id = req.params.routineId;
-			/* week, day, date, img ,text 받아오기 */
-			const week = req.body.week;
-			const day = req.body.day;
-			const date = req.body.date; 
-			const img = req.body.img;
-			const text = req.body.text;
+  auth: (req, res) => {
+    if (!user.isToken(req, res)) {
+      return res.status(400).json({
+        success: false,
+        isLogin: false,
+        err: '로그인을 해주세요!',
+      });
+    }
 
-			const param = [user_no, routine_id, week, day, date, img, text]
-			data.auth.add(param);
-			
-			res.json({
-				success : true
-			})
-		}
-		catch(err){
-			res.status(400);
-			throw new Error(err);
-		}
-	}
-}
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.decode(token);
+
+    try {
+      const user_no = decoded.no;
+      const routine_id = req.params.routineId;
+      /* week, day, date, img ,text 받아오기 */
+      const week = req.body.week;
+      const day = req.body.day;
+      const date = req.body.date;
+      const img = req.body.img;
+      const text = req.body.text;
+
+      const param = [user_no, routine_id, week, day, date, img, text];
+      data.auth.add(param);
+
+      res.json({
+        success: true,
+      });
+    } catch (err) {
+      res.status(400);
+      throw new Error(err);
+    }
+  },
+};
 
 const goods = {
-	buy : async (req, res) => {
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
-		
-		const userNo = decoded.id;
-		const goodsId = req.body.goods_id;
-		
-		
-		const date = new Date();
-		const year = date.getFullYear();
-		const month = ('0' + (date.getMonth() + 1)).slice(-2);
-		const day = ('0' + date.getDate()).slice(-2);
-		const dateStr = year + '-' + month + '-' + day;
-		
-		const hours = ('0' + date.getHours()).slice(-2);
-		const minutes = ('0' + date.getMinutes()).slice(-2);
-		const seconds = ('0' + date.getSeconds()).slice(-2);
-		const timeStr = hours + ':' + minutes + ':' + seconds;
-		
-		const dayStr = dateStr+' '+timeStr
-		
-		const param = [userNo, goodsId, dayStr];
-		
-	  	data.user_goods.add(param);
-		
-		const goods = await data.goods.get('id', goodsId);
-		
-		res.json({
-			success : true,
-			goods : goods
-		})
-	}
-}
+  buy: async (req, res) => {
+    if (!user.isToken(req, res)) {
+      return res.status(400).json({
+        success: false,
+        isLogin: false,
+        err: '로그인을 해주세요!',
+      });
+    }
+
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.decode(token);
+
+    const userNo = decoded.id;
+    const goodsId = req.body.goods_id;
+
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    const dateStr = year + '-' + month + '-' + day;
+
+    const hours = ('0' + date.getHours()).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    const seconds = ('0' + date.getSeconds()).slice(-2);
+    const timeStr = hours + ':' + minutes + ':' + seconds;
+
+    const dayStr = dateStr + ' ' + timeStr;
+
+    const param = [userNo, goodsId, dayStr];
+
+    data.user_goods.add(param);
+
+    const goods = await data.goods.get('id', goodsId);
+
+    res.json({
+      success: true,
+      goods: goods,
+    });
+  },
+};
 
 module.exports = {
-	output,
-	user,
-	routine,
-	goods
-}
+  output,
+  user,
+  routine,
+  goods,
+};

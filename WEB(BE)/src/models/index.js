@@ -176,12 +176,12 @@ const user_goods = {
 }
 
 module.exports = {
-	user,
-	user_category,
-	level_exp,
-	routine,
-	user_routine,
-	auth,
-	goods,
-	user_goods
+  user,
+  user_category,
+  level_exp,
+  routine,
+  user_routine,
+  auth,
+  goods,
+  user_goods,
 };
