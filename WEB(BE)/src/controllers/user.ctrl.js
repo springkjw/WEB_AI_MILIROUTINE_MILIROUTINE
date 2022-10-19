@@ -41,14 +41,22 @@ const output = {
 		
 		const token = req.headers.authorization.split(' ')[1];
 		const decoded = jwt.decode(token);
-		
 		const host = decoded.no;
 		
-		const param = await data.routine.get('host', host);
+		const routines = await data.user_routine.get('user_no', host);
+
+		var JoinedRoutine = [];
+		
+		for(const routine of routines){
+			if(routine.type == 'join'){
+				const myRoutine = await data.routine.get('id', routine.routine_id);
+				JoinedRoutine.push(myRoutine);
+			}
+		}
 		
 		res.json({
 			success : true,
-			routine : param
+			routine : JoinedRoutine
 		})
 	},
 	
