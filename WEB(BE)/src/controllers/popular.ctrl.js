@@ -49,8 +49,7 @@ const output = {
 		
 		res.json({
 			success : true,
-			rankedRoutine : JoinedRoutine // 참가자가 많은 순으로 배치
-			// 배열의 0번째 요소가 routine_id, 1번째 요소가 참가자 수
+			rankedRoutine : JoinedRoutine 
 		})
 	} 
 }

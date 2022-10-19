@@ -43,88 +43,99 @@ const createHashedPasswordWithSalt = (plainPassword, salt) =>
   });
 
 const output = {
-  mine: async (req, res) => {
-    if (!user.isToken(req, res)) {
-      return res.status(400).json({
-        success: false,
-        isLogin: false,
-        err: '로그인을 해주세요!',
-      });
-    }
+	mine : async (req, res)=>{
+		if(!user.isToken(req, res)){
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
+				
+			})
+		}
+		
+		const token = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.decode(token);
+		const host = decoded.no;
+		
+		const routines = await data.user_routine.get('user_no', host);
 
-    const token = req.headers.authorization.split(' ')[1];
-    const decoded = jwt.decode(token);
-
-    const host = decoded.no;
-
-    const param = await data.routine.get('host', host);
-
-    res.json({
-      success: true,
-      routine: param,
-    });
-  },
-
-  like: async (req, res) => {
-    if (!user.isToken(req, res)) {
-      return res.status(400).json({
-        success: false,
-        isLogin: false,
-        err: '로그인을 해주세요!',
-      });
-    }
-
-    const token = req.headers.authorization.split(' ')[1];
-    const decoded = jwt.decode(token);
-
-    const myRoutine = await data.user_routine.get('user_no', decoded.no);
-    const likeRoutineId = [];
-
-    for (const routine of myRoutine) {
-      if (routine.type == 'like') {
-        likeRoutineId.push(routine.routine_id);
-      }
-    }
-
-    res.json({
-      success: true,
-      likeRoutineID: likeRoutineId,
-    });
-  },
-
-  auth: (req, res) => {
-    const routine = data.routine.get('id', req.params.routineId);
-
-    res.json({
-      success: true,
-      routine: routine,
-    });
-  },
-
-  goods: async (req, res) => {
-    if (!user.isToken(req, res)) {
-      return res.status(403).json({
-        success: false,
-        isLogin: false,
-        err: '로그인을 해주세요!',
-      });
-    }
-
-    const token = req.headers.authorization.split(' ')[1];
-    const decoded = jwt.decode(token);
-
-    const userPoint = await data.user.get('id', decoded.id).point;
-
-    const goods = await data.goods.getAll();
-
-    res.json({
-      success: true,
-      userPoint: userPoint,
-      goods: goods, // MySQL Server 통일 Issue 확인
-      // id, name, description, thubnail_img,price
-    });
-  },
-};
+		var JoinedRoutine = [];
+		
+		for(const routine of routines){
+			if(routine.type == 'join'){
+				const myRoutine = await data.routine.get('id', routine.routine_id);
+				JoinedRoutine.push(myRoutine);
+			}
+		}
+		
+		res.json({
+			success : true,
+			routine : JoinedRoutine
+		})
+	},
+	
+	like : async (req, res)=>{
+		if(!user.isToken(req, res)){
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
+				
+			})
+		}
+		
+		const token = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.decode(token)
+		
+		const myRoutine = await data.user_routine.get('user_no',decoded.no);
+		const likeRoutineId = [];
+		
+		for(const routine of myRoutine){
+			if(routine.type == 'like'){
+				likeRoutineId.push(routine.routine_id);
+			}
+		}
+		
+		res.json({
+			success : true,
+			likeRoutineID : likeRoutineId
+		})
+	},
+	
+	auth : (req, res) => {
+		const routine = data.routine.get('id', req.params.routineId);
+		
+		res.json({
+			success : true,
+			routine : routine
+		})
+	},
+	
+	goods : async (req, res) => {
+		if(!user.isToken(req, res)){
+			return res.status(403).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
+			})
+		}
+		
+		const token = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.decode(token)
+		
+		const userPoint = await data.user.get('id', decoded.id).point;
+		
+		const goods = await data.goods.getAll();
+		
+		
+		res.json({
+			success : true,
+			userPoint : userPoint,
+			goods : goods	 // MySQL Server 통일 Issue 확인
+			// id, name, description, thubnail_img,price 
+		})
+	}
+}
 
 const user = {
   setInfo: (req, res) => {
