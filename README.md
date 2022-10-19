@@ -16,6 +16,9 @@
 **밀리루틴**은 이러한 문제를 해결하기 위해 탄생하였습니다.  
 군인의 입장에서, 군인의 특성에 맞춘 루틴 형성 서비스를 제공합니다.
 
+> 개발과 관련된 사항은 세부 폴더의 `README.md`에서 확인 바랍니다!   
+> [기획/디자인 README](assets/README.md) | [프론트엔드 README](<WEB(FE)/README.md>) | [백엔드 README](<WEB(BE)/README.md>) | [AI/ML README](AI/README.md)
+
 ## 🩸 **Pain Points | 해결하려는 문제**
 
 1. 루틴을 세워 자기계발을 하고 싶은 군인이 많지만, 작심삼일에 그치는 경우가 잦다.  
@@ -85,12 +88,6 @@ git clone https://github.com/osamhack2022/WEB_AI_MILIROUTINE_MILIROUTINE.git
 - `Vite`
 - `Docker-compose`
 
-> 💡 더 자세한 내용은 세부 폴더의 `README.md`에서 확인 바랍니다!
->
-> - 기획/디자인 [README](assets/README.md)
-> - FE [README](<WEB(FE)/README.md>)
-> - BE [README](<WEB(BE)/README.md>)
-> - AI [README](AI/README.md)
 
 ## 👋 **Team Info | 팀 정보**
 
