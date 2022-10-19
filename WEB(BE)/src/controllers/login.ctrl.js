@@ -18,7 +18,7 @@ const user = {
 		
 		if(!req.body.id){
 			res.status(400).json({
-				loginSuccess : false,
+				success : false,
 				err : "ID를 찾을 수 없습니다"
 			});
 		}

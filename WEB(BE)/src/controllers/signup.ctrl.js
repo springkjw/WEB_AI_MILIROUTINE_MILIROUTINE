@@ -63,31 +63,23 @@ const user = {
 		
 		const token = jwt.token.create(req, res, userId, userName);
 		
+		const user_no = await data.user.get('id', userId).no;
+		const categories = req.body.category;
+		
+		for(const category of categories){
+			data.user_category.add(user_no, category);
+		}
+		
+		const likeRoutines = req.body.likeRoutine;
+		
+		for(const routine of likeRoutines){
+			data.user_routine.add(user_no, routine, 'like')
+		}
+
 		return res.json({
 			success : true,
 			token : token,
 			user : param
-		})
-	},
-	
-	addInfo : async(req, res) => {
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : "회원가입을 먼저 해주세요!"
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1]
-		const userId = jwt.decode(token).id
-		
-		const user_no = await data.user.get('id', userId).no;
-		
-		data.user_category.add(user_no, req.body.category);
-		
-		return res.json({
-			success : true
 		})
 	},
 	
