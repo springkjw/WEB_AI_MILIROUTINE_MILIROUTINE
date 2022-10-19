@@ -403,9 +403,10 @@ INSERT INTO level_exp
   | key | value 타입 | 설명 |
   | --- | ---------- | ---- |
   | success | true | |
-  | routine | object | 해당 루틴의 `routine` 테이블 정보 |
+  | routine | object 배열 | 해당 루틴의 `routine` 테이블 정보 |
 
-> // routine이 하나가 아니므로 수정 필요
+>  routine이 하나가 아니므로 수정 필요
+>  routine Object 배열로 수정
 
 #### 5. **`GET /user/my/like` : 좋아요한 밀리루틴 정보**
 
