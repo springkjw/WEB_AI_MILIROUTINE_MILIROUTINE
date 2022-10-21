@@ -15,7 +15,7 @@ const output = {
 		const routines = await data.user_routine.getAll();
 		
 		if(routines.length == 0){
-			res.status(400).json({
+			return res.status(400).json({
 				success : false,
 				err : '루틴이 없습니다!'
 			})

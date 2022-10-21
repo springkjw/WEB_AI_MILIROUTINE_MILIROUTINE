@@ -80,8 +80,17 @@ const routine =  {
 		});
 	},
 	
+	getWithItems :  async(val1, val2)=>{
+		return new Promise(function(resolve,reject){
+			db.query('SELECT * FROM routine WHERE host = ? AND name = ?', [val1, val2], function(err, rows, fields){
+				if(err) {throw err;}
+				resolve(rows);
+			});
+		});
+	},
+	
 	add : async(values)=>{
-		db.query('INSERT INTO routine (host,name,category,thumbnail_img,auth_cycle,auth_description_list,start_date,duration,point_info_list) VALUES (?)', [values] , function(err,rows, fields){
+		db.query('INSERT INTO routine (host,name,category,thumbnail_img,auth_cycle,auth_description_list,start_date,duration) VALUES (?)', [values] , function(err,rows, fields){
 				if(err) {throw new Error(err);}
 			});
 	}

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const path = require('path');
-const EXPIRETIMEOFMINUTE = 40; // 분 단위
+const EXPIRETIMEOFMINUTE = 300; // 분 단위
 
 require('dotenv').config({path:path.join(__dirname, '.env')});
 

@@ -12,33 +12,72 @@ const createHashedPasswordWithSalt = (plainPassword, salt) =>
         });
     });
 
+const token = {
+	isToken : (req, res) => {
+		if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
+			return true;
+		}
+
+		else{
+			return false;
+		}
+	},
+	
+	decode : (req, res) => {
+		if(!token.isToken(req, res)){
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요'
+			})
+		};
+		
+		const jwtToken = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.token.decode(jwtToken)
+		return decoded;
+	}
+}
+
 const user = {
+	hasSameId : (userInfo) => {
+		if(userInfo.length > 0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	},
 	
 	checkUserInfo : async(req, res) => {
-		
 		if(!req.body.id){
-			res.status(400).json({
+			return res.status(400).json({
 				success : false,
 				err : "ID를 찾을 수 없습니다"
 			});
 		}
 		
+		if(!req.body.pw){
+			return res.status(400).json({
+				success : false,
+				err : "Password를 찾을 수 없습니다"
+			});
+		}
+		
 		const userInfo = await data.user.get('id', req.body.id);
-
-		if(!user.isToken(req, res)){
-			if(userInfo.length > 0){
-				// ID가 존재
+		
+		if(!token.isToken(req, res)){
+			if(user.hasSameId(userInfo)){ 
 				if(userInfo[0].pw == await createHashedPasswordWithSalt(req.body.pw, userInfo[0].salt)){
 					const token = jwt.token.create(req, res, userInfo[0].no, userInfo[0].id, userInfo[0].name);
 					
-					return res.json({
+					res.json({
 						success : true,
-						token : token, // token을 전달하고 client가 token을 헤더에 저장
+						token : token,
 						user : userInfo[0]
 					});
 				}
 				else{
-					res.status(400).json({
+					return res.status(400).json({
 						success : false,
 						err : "비밀번호가 틀렸습니다!"
 					});
@@ -46,7 +85,7 @@ const user = {
 			}
 
 			else{
-				res.status(400).json({
+				return res.status(400).json({
 					success : false,
 					err : "아이디가 존재하지 않습니다!"
 				});
@@ -54,27 +93,10 @@ const user = {
 		}
 		
 		else{
-			res.status(400).json({
+			return res.status(400).json({
 				success : false,
 				err : "이미 로그인 되어있습니다!"
 			});
-		}
-
-	},
-	
-	isToken : (req, res) => {
-		try{
-			if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
-				return true;
-			}
-
-			else{
-				return false;
-			}
-		}
-		
-		catch(err){
-			throw new Error(err);
 		}
 	}
 }

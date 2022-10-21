@@ -21,29 +21,79 @@ const createHashedPassword = (plainPassword) =>
         });
     }); 
 
+const token = {
+	isToken : (req, res) => {
+		if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
+			return true;
+		}
+
+		else{
+			return false;
+		}
+	},
+	
+	decode : (req, res) => {
+		if(!token.isToken(req, res)){
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요'
+			})
+		};
+		
+		const jwtToken = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.token.decode(jwtToken)
+		return decoded;
+	}
+}
+
 const user = {
 	regist : async(req, res) => {
-		const { password, salt } = await createHashedPassword(req.body.pw);
-		
-		const userId = req.body.id;
-		const userPassword = password;
-		const userEmail = req.body.email;
-		const userName = req.body.name;
-
-		const param = [userId, userPassword, userEmail, userName, salt]
-		const name = ['id', 'password', 'email', 'name', 'salt']
-		
-		for(const key in param){
-			if(!param[key]){
-				res.status(400).json({
-					success : false,
-					err : name[key] + "의 값이 없습니다!"
-				});
-			}
+		if(token.isToken(req, res)){
+			return res.status(400).json({
+				success : false,
+				err : '이미 로그인이 되어있습니다!'
+			})
 		}
 		
-		const userInfoWithId = await data.user.get('id', userId);
-		const userInfoWithEmail = await data.user.get('email', userEmail);
+		const { id, pw, email, name, category, likeRoutine } = req.body;
+		const { password, salt } = await createHashedPassword(pw);
+		const param = [id, password, email, name, salt]
+		
+		if(!id){
+			res.status(400).json({
+				success : false,
+				err : "아이디를 입력해주세요!"
+			});
+		} else if(!pw){
+			res.status(400).json({
+				success : false,
+				err : "비밀번호를 입력해주세요!"
+			});
+		} else if(!email){
+			res.status(400).json({
+				success : false,
+				err : "이메일을 입력해주세요!"
+			});
+		} else if(!name){
+			res.status(400).json({
+				success : false,
+				err : "이름을 입력해주세요!"
+			});
+		} else if(!category){
+			res.status(400).json({
+				success : false,
+				err : "카테고리를 선택해주세요!"
+			});
+		} else if(!likeRoutine){
+			res.status(400).json({
+				success : false,
+				err : "좋아하는 루틴을 선택해주세요!"
+			});
+		}
+		
+		const userInfoWithId = await data.user.get('id', id);
+		const userInfoWithEmail = await data.user.get('email', email);
 
 		if(userInfoWithId.length > 0){
 			res.status(400).json({
@@ -61,18 +111,15 @@ const user = {
 		
 		data.user.add(param);
 		
-		const token = jwt.token.create(req, res, userId, userName);
+		const token = jwt.token.create(req, res, id, name);
 		
-		const user_no = await data.user.get('id', userId).no;
-		const categories = req.body.category;
+		const user_no = await data.user.get('id', id)[0].no;
 		
-		for(const category of categories){
-			data.user_category.add(user_no, category);
+		for(const item of category){
+			data.user_category.add(user_no, item);
 		}
 		
-		const likeRoutines = req.body.likeRoutine;
-		
-		for(const routine of likeRoutines){
+		for(const routine of likeRoutine){
 			data.user_routine.add(user_no, routine, 'like')
 		}
 
@@ -81,23 +128,6 @@ const user = {
 			token : token,
 			user : param
 		})
-	},
-	
-	isToken : (req, res) => {
-		try{
-			if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
-				return true;
-			}
-
-			else{
-				return false;
-			}
-		}
-		
-		catch(err){
-			res.status(400);
-			throw new Error("로그인이 되어있지 않거나 토큰이 만료되었습니다!");
-		}
 	}
 }
 
