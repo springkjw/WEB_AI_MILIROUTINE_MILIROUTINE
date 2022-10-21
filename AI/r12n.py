@@ -18,7 +18,7 @@ def r12n(i,n):  # i번 유저한테 루틴 n개 추천
     print(cat)
     # ret=[i+1 for i in range(30)]  # 30을 루틴 개수로 바꿔야 or 텐서 개수
     # ret: 루틴번호
-    id=[0 for i in range(31)]
+    id=[0 for i in range(len(ret)+1)]
     # print(ret)
     print(id)
     cd={c:1 for c in cat}  # category->숫자 dictionary
