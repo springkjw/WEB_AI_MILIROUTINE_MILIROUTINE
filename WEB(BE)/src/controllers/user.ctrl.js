@@ -29,6 +29,29 @@ const createHashedPasswordWithSalt = (plainPassword, salt) =>
     });
 
 const output = {
+	setting : async (req, res)=>{
+		if(!user.isToken(req, res)){
+			return res.status(400).json({
+				success : false,
+				isLogin : false,
+				err : '로그인을 해주세요!'
+				
+			})
+		}
+		
+		const token = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.decode(token);
+		
+		const name = decoded.name;
+		const categories = await data.user_category.get('user_no', decoded.no);
+		
+		res.json({
+			success : true,
+			name : name,
+		    category : categories
+		})
+	},
+	
 	mine : async (req, res)=>{
 		if(!user.isToken(req, res)){
 			return res.status(400).json({
@@ -117,8 +140,7 @@ const output = {
 		res.json({
 			success : true,
 			userPoint : userPoint,
-			goods : goods	 // MySQL Server 통일 Issue 확인
-			// id, name, description, thubnail_img,price 
+			goods : goods
 		})
 	}
 }
@@ -137,7 +159,15 @@ const user = {
 		const decoded = jwt.decode(token)
 		
 		if(req.body.name){
-			data.user.update('nickname', req.body.name, decoded.id);
+
+			data.user.update('nickname', req.body.name, decoded.id); 
+
+			return res.status(400).json({
+				success : false,
+				err : err
+			})
+
+			
 		}
 		else{
 			return res.status(400).json({
@@ -147,8 +177,21 @@ const user = {
 		}
 		
 		if(req.body.category){
-			data.user_category.update('category', req.body.category, decoded.no);
+			const categories = req.body.category;
+			
+			data.user_category.delete('user_no', decoded.no);
+		
+			for(const category of categories){
+				const param = [decoded.no, category]
+				data.user_category.add(param);
+			}
+			
+			return res.status(400).json({
+				success : false,
+				err : '닉네임을 입력해주세요!'
+			})
 		}
+		
 		else{
 			return res.satus(400).json({
 				success : false,
@@ -238,12 +281,7 @@ const routine = {
 		try{
 			const user_no = decoded.no;
 			const routine_id = req.params.routineId;
-			/* week, day, date, img ,text 받아오기 */
-			const week = req.body.week;
-			const day = req.body.day;
-			const date = req.body.date; 
-			const img = req.body.img;
-			const text = req.body.text;
+			const {week, day, date, img, text} = req.body;
 
 			const param = [user_no, routine_id, week, day, date, img, text]
 			data.auth.add(param);
@@ -253,8 +291,11 @@ const routine = {
 			})
 		}
 		catch(err){
-			res.status(400);
-			throw new Error(err);
+			res.status(400).json({
+				success : false,
+				err : err
+			});
+			
 		}
 	}
 }

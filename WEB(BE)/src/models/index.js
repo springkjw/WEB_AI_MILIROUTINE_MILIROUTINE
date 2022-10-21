@@ -28,7 +28,7 @@ const user =  {
 	},
 	
 	update : async(field, value, id)=>{
-		db.query('UPDATE user SET ' + field + ' = ? WHERE id = ' + id + '', value , function(err,rows, fields){
+		db.query('UPDATE user SET ' + field + ' = ? WHERE id = ?', [value,id] , function(err,rows, fields){
 				if(err) {throw new Error(err);}
 			});
 	}
@@ -38,7 +38,7 @@ const user_category = {
 	get :  async(item, val)=>{
 		return new Promise(function(resolve,reject){
 			db.query('SELECT * FROM user_category WHERE ' + item + ' = ?', val, function(err, rows, fields){
-				if(err) {throw new Error(err);}
+				if(err) {throw err;}
 				resolve(rows);
 			});
 		});
@@ -47,15 +47,16 @@ const user_category = {
 	
 	add : async(values)=>{
 		db.query('INSERT INTO user_category (user_no, category) VALUES (?)', [values] , function(err,rows, fields){
-				if(err) {throw new Error(err);}
-			});
+			if(err) {throw new Error(err);}
+		});
 	},
 	
-	update : async(field, value, key)=>{
-		db.query('UPDATE user_category SET ' + field + ' = ? WHERE user_no = ' + key, value , function(err,rows, fields){
+	delete : async(item, val)=>{
+		db.query('DELETE FROM user_category WHERE ' + item + ' = ' + val + '' , function(err, result){
 				if(err) {throw new Error(err);}
 			});
 	}
+	
 }
 
 const level_exp = {
