@@ -19,6 +19,7 @@ const output = {
 			success : true,
 			isLogin : true,
 			user : userInfo
+			
 		})
 	}
 }

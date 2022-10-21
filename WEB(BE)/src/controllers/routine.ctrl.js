@@ -87,7 +87,6 @@ const routine = {
 	}
 }
 
-
 module.exports = {
-  routine,
-};
+	routine
+}
