@@ -4,29 +4,43 @@ const crypto = require('crypto');
 const STRETCHINGKEY = 9999;
 
 const createSalt = () =>
-	new Promise((resolve,reject)=>{
-		crypto.randomBytes(64, (err,buf)=>{
-			if(err) reject(err);
-			resolve(buf.toString('base64'));
-		});
-});
+  new Promise((resolve, reject) => {
+    crypto.randomBytes(64, (err, buf) => {
+      if (err) reject(err);
+      resolve(buf.toString('base64'));
+    });
+  });
 
 const createHashedPassword = (plainPassword) =>
-    new Promise(async (resolve, reject) => {
-        const salt = await createSalt(); 
-        crypto.pbkdf2(plainPassword, salt, STRETCHINGKEY, 64, 'sha512', (err, key) => {
-            if (err) reject(err);
-            resolve({ password: key.toString('base64'), salt });
-        });
-    }); 
+  new Promise(async (resolve, reject) => {
+    const salt = await createSalt();
+    crypto.pbkdf2(
+      plainPassword,
+      salt,
+      STRETCHINGKEY,
+      64,
+      'sha512',
+      (err, key) => {
+        if (err) reject(err);
+        resolve({ password: key.toString('base64'), salt });
+      }
+    );
+  });
 
 const createHashedPasswordWithSalt = (plainPassword, salt) =>
-    new Promise(async (resolve, reject) => {
-        crypto.pbkdf2(plainPassword, salt, STRETCHINGKEY, 64, 'sha512', (err, key) => {
-            if (err) reject(err);
-            resolve(key.toString('base64'));
-        });
-    });
+  new Promise(async (resolve, reject) => {
+    crypto.pbkdf2(
+      plainPassword,
+      salt,
+      STRETCHINGKEY,
+      64,
+      'sha512',
+      (err, key) => {
+        if (err) reject(err);
+        resolve(key.toString('base64'));
+      }
+    );
+  });
 
 const output = {
 	setting : async (req, res)=>{
