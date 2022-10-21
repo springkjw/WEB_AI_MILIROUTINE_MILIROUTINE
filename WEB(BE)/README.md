@@ -345,7 +345,7 @@ INSERT INTO level_exp
   | --- | ---------- | ---- |
   | success | true | |
   | name | string | |
-  | category | array | 로그인된 아이디의 카테고리 정보들 출력 (ex. 아래 코드)|
+  | category | array of object | 로그인된 아이디의 카테고리 정보들 출력 (ex. 아래 코드)|
   	
 	`[{
             "id": 23,
@@ -500,7 +500,7 @@ INSERT INTO level_exp
   | --- | ---------- | ---- |
   | success | true | |
   | userPoint | integer | |
-  | goods | array of object | `goods` 테이블 전체 정보 |
+  | goods | array of object | `goods` 테이블 전체 정보 (id, name, description, thubnail_img,price)|
 
 #### 2. **`POST /user/pointshop` : 포인트샵 품목 구입**
 
