@@ -399,7 +399,7 @@ INSERT INTO level_exp
   | category | string | |
   | fileUrl | URL string | 대표 이미지 |
   | auth_cycle | integer | 주 x회 |
-  | auth_description | array | 인증 방법 ex) ["7시 전에 일어나세요", "8시 전에 인증하세요"] |
+  | auth_description_list | array | 인증 방법 ex) ["7시 전에 일어나세요", "8시 전에 인증하세요"] |
   | start_date | DATE string | 루틴 시작일 |
   | duration | integer | 총 x주 |
   | point_info_list | array of object | 포인트 정보 ex) [{'type': "every_week", 'point': 20}, ...] |
