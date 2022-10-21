@@ -240,6 +240,7 @@ INSERT INTO level_exp
 | GET /user/my/like                  | 좋아요한 밀리루틴 정보 | user.ctrl → output.like              |
 | GET /user/routine/:routineId/auth  | 루틴 인증 정보         | user.ctrl → output.auth              |
 | POST /user/routine/:routineId/auth | 루틴 인증하기          | user.ctrl → routine.auth             |
+| GET /user/settings                 | 회원정보               | user.ctrl → output.setting           |
 | POST /user/settings                | 회원정보 수정          | user.ctrl → user.setInfo             |
 | POST /user/settings/pw             | 비밀번호 변경          | user.ctrl → user.setPassword         |
 | GET /user/pointshop                | 포인트샵 품목 정보     | user.ctrl → output.goods             |
@@ -312,8 +313,8 @@ INSERT INTO level_exp
   | success | true | |
   | token | string | JWT 토큰 |
   | user | array of object | {id, pw(hashed), email, name, salt} |
-
-#### 4. **`POST /user/settings` : 회원정보 수정**
+  
+#### 4. **`GET /user/settings` : 회원정보 수정**
 
 - Request Headers
   | header | value 타입 | 설명 |
@@ -330,6 +331,32 @@ INSERT INTO level_exp
   | key | value 타입 | 설명 |
   | --- | ---------- | ---- |
   | success | true | |
+
+
+#### 4. **`POST /user/settings` : 회원정보 수정**
+
+- Request Headers
+  | header | value 타입 | 설명 |
+  | -- | -- | -- |
+  | Authorization | JWT 토큰 | user.no 정보 추출 |
+
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  | name | string | |
+  | category | array of object | 로그인된 아이디의 카테고리 정보들 출력 (ex. 아래 코드)|
+  	
+	`[{
+            "id": 23,
+            "user_no": 59,
+            "category": "dream"
+        },
+        {
+            "id": 163,
+            "user_no": 59,
+            "category": "study"
+        }]`
 
 #### 5. **`POST /user/settings/pw` : 비밀번호 변경**
 
@@ -473,7 +500,7 @@ INSERT INTO level_exp
   | --- | ---------- | ---- |
   | success | true | |
   | userPoint | integer | |
-  | goods | array of object | `goods` 테이블 전체 정보 |
+  | goods | array of object | `goods` 테이블 전체 정보 (id, name, description, thubnail_img,price)|
 
 #### 2. **`POST /user/pointshop` : 포인트샵 품목 구입**
 
