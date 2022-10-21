@@ -38,7 +38,7 @@ const user_category = {
 	get :  async(item, val)=>{
 		return new Promise(function(resolve,reject){
 			db.query('SELECT * FROM user_category WHERE ' + item + ' = ?', val, function(err, rows, fields){
-				if(err) {throw err;}
+				if(err) {throw new Error(err);}
 				resolve(rows);
 			});
 		});

@@ -173,17 +173,12 @@ const user = {
 		const decoded = jwt.decode(token)
 		
 		if(req.body.name){
-
 			data.user.update('nickname', req.body.name, decoded.id); 
-
 			return res.status(400).json({
 				success : false,
 				err : err
 			})
-
-			
-		}
-		else{
+		} else{
 			return res.status(400).json({
 				success : false,
 				err : '닉네임을 입력해주세요!'
@@ -192,21 +187,16 @@ const user = {
 		
 		if(req.body.category){
 			const categories = req.body.category;
-			
 			data.user_category.delete('user_no', decoded.no);
-		
 			for(const category of categories){
 				const param = [decoded.no, category]
 				data.user_category.add(param);
 			}
-			
 			return res.status(400).json({
 				success : false,
 				err : '닉네임을 입력해주세요!'
 			})
-		}
-		
-		else{
+		} else{
 			return res.satus(400).json({
 				success : false,
 				err : '카테고리를 선택해주세요!'
