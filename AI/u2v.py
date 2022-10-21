@@ -1,3 +1,4 @@
+# from numpy import indices
 import torch
 import gensim
 import json
@@ -8,21 +9,32 @@ from cfg import open
 
 # model=gensim.models.Word2Vec.load('./AI/kosql.bin')
 
-d2v=torch.load('./AI/d2v_tensor.pt')
+def u2v(u):
+    model=gensim.models.Word2Vec.load('./AI/kosql.bin')
 
-routine=cs.ex('SELECT routine_id FROM user_routine WHERE user_no = 20;')
-routine=[r[0] for r in routine]  # ((ㅁ,),(ㅎ,),....)
+    d2v=torch.load('./AI/d2v_tensor.pt')
 
-print(routine)
+    routine=cs.ex('SELECT routine_id FROM user_routine WHERE user_no = '+str(u)+';')
+    routine=[r[0] for r in routine]  # ((ㅁ,),(ㅎ,),....)
 
-tensor=[]
-# tensor=torch.tensor([d2v[r] for r in routine])
-tensor=torch.stack([*(d2v[r] for r in routine)], 0)
-print(tensor)
-# print([d2v[r] for r in routine])
-tensor=torch.mean(tensor,0)
-print(tensor.size())
-print(tensor)
+    # print(routine)
+
+    tensor=[]
+    # tensor=torch.tensor([d2v[r] for r in routine])
+    tensor=torch.stack([*(d2v[r-1] for r in routine)], 0)
+    # print(tensor)
+    # print([d2v[r] for r in routine])
+    tensor=torch.mean(tensor,0)
+    # print(tensor.size())
+    # print(tensor)
+    ret=torch.inner(d2v,tensor)
+    # print(ret)
+    sorted, indices=torch.sort(ret,descending=True)
+    # print(torch.add(indices,1))
+    return torch.add(indices,1)
+    #print(model.similar_by_vector(tensor))
+
+u2v(2)
 # for r in routine:
 
 #     tensor+=d2v[r]
