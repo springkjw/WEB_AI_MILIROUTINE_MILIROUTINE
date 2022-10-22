@@ -295,11 +295,11 @@ const goods = {
 		
 	  	data.user_goods.add(param);
 		
-		const goods = await data.goods.get('id', goodsId)[0];
+		const goods = await data.goods.get('id', goodsId);
 		
 		res.json({
 			success : true,
-			goods : goods
+			goods : goods[0]
 		})
 	}
 }

@@ -74,10 +74,8 @@ const routine = {
 		const param = [host[0].no , name, category, image, auth_cycle, auth_description, start_date, duration];
 		data.routine.add(param);
 		
-		const routine_id = await data.routine.getWithItems(host[0].no, name)// 만약 routine 이름이 중복 가능일 경우 변경 필요
-		
+		const routine_id = await data.routine.getWithItems(host[0].no, name)
 		const type = 'join';
-		
 		const param2 = [host[0].no, routine_id[0].no, type];
 		data.user_routine.add(param2);
 		
@@ -95,7 +93,7 @@ const routine = {
 		res.json({
 			success : true,
 			routine_id : routineId,
-			routine : param
+			routine : param[0]
 		})
 	}
 }

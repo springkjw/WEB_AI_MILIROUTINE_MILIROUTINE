@@ -21,7 +21,7 @@ const token = {
 
 
 const output = {
-	home : (req, res) => {
+	home : async (req, res) => {
 		if(!token.isToken(req, res)){
 			return res.json({
 				success : true,
@@ -30,12 +30,12 @@ const output = {
 		}
 		
 		const decoded = token.decode(req, res);
-		const userInfo = data.user.get('id', decoded.id);
+		const userInfo = await data.user.get('id', decoded.id);
 		
 		res.json({
 			success : true,
 			isLogin : true,
-			user : userInfo
+			user : userInfo[0]
 		})
 	}
 }

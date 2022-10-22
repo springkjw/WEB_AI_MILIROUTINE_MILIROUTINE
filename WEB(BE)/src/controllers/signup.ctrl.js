@@ -116,11 +116,11 @@ const user = {
 		const user_no = await data.user.get('id', id)[0].no;
 		
 		for(const item of category){
-			data.user_category.add(user_no, item);
+			data.user_category.add([user_no, item]);
 		}
 		
 		for(const routine of likeRoutine){
-			data.user_routine.add(user_no, routine, 'like')
+			data.user_routine.add([user_no, routine, 'like'])
 		}
 
 		return res.json({

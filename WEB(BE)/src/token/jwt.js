@@ -6,7 +6,6 @@ require('dotenv').config({path:path.join(__dirname, '.env')});
 
 const token = {
 	create : (req, res, userNo, userId, userName) => {
-		
 		const token = jwt.sign({
 			type: "JWT",
 			no : userNo,
@@ -16,9 +15,7 @@ const token = {
 			expiresIn: EXPIRETIMEOFYEAR + "y",
 		});
 		
-		
 		return token;
-	
 	},
 	
 	decode : (token) => {
