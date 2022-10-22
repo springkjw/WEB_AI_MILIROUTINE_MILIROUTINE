@@ -13,14 +13,6 @@ const token = {
 	},
 	
 	decode : (req, res) => {
-		if(!token.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요'
-			})
-		};
-		
 		const jwtToken = req.headers.authorization.split(' ')[1];
 		const decoded = jwt.token.decode(jwtToken)
 		return decoded;
