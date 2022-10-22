@@ -236,6 +236,7 @@ INSERT INTO level_exp
 | GET /popular                       | 인기 밀리루틴 정보     | popular.ctrl → routine.outputPopular |
 | POST /routine/make                 | 밀리루틴 개설하기      | routine.ctrl → routine.make          |
 | GET /routine/:routineId            | 루틴 상세 정보         | routine.ctrl → routine.output        |
+| POST /routine/:routineId           | 루틴 참여하기          | routine.ctrl → routine.join          |
 | GET /user/my                       | 나의 밀리루틴 정보     | user.ctrl → output.mine              |
 | GET /user/my/like                  | 좋아요한 밀리루틴 정보 | user.ctrl → output.like              |
 | GET /user/routine/:routineId/auth  | 루틴 인증 정보         | user.ctrl → output.auth              |
@@ -418,8 +419,21 @@ INSERT INTO level_exp
   | success | true | |
   | routine_id | integer | 루틴 고유번호 |
   | routine | object | 해당 루틴의 `routine` 테이블 정보 |
+  
+#### 4. **`POST /routine/:routineId` : 루틴 상세 정보**
 
-#### 4. **`GET /user/my` : 나의 밀리루틴 정보**
+- Response Body (200 OK)
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | true | |
+  
+- 400 Bad Request
+  | key | value 타입 | 설명 |
+  | --- | ---------- | ---- |
+  | success | false | |
+  | err | string | 에러 메시지 |
+
+#### 5. **`GET /user/my` : 나의 밀리루틴 정보**
 
 - Request Headers
   | header | value 타입 | 설명 |
@@ -435,7 +449,7 @@ INSERT INTO level_exp
 >  routine이 하나가 아니므로 수정 필요
 >  routine Object 배열로 수정
 
-#### 5. **`GET /user/my/like` : 좋아요한 밀리루틴 정보**
+#### 6. **`GET /user/my/like` : 좋아요한 밀리루틴 정보**
 
 - Request Headers
   | header | value 타입 | 설명 |
