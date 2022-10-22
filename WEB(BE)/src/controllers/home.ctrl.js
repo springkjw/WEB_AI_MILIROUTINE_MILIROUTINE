@@ -1,47 +1,45 @@
 const jwt = require('../token/jwt');
 const data = require('../models/index');
 
+const token = {
+	isToken : (req, res) => {
+		if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
+			return true;
+		}
+
+		else{
+			return false;
+		}
+	},
+	
+	decode : (req, res) => {
+		const jwtToken = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.token.decode(jwtToken)
+		return decoded;
+	}
+}
+
+
 const output = {
-	home : (req, res) => {
-		if(!user.isToken(req, res)){
+	home : async (req, res) => {
+		if(!token.isToken(req, res)){
 			return res.json({
 				success : true,
 				isLogin : false
 			})
 		}
 		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
-		
-		const userInfo = data.user.get('id', decoded.id);
+		const decoded = token.decode(req, res);
+		const userInfo = await data.user.get('id', decoded.id);
 		
 		res.json({
 			success : true,
 			isLogin : true,
-			user : userInfo
-			
+			user : userInfo[0]
 		})
 	}
 }
 
-const user = {
-	isToken : (req, res) => {
-		try{
-			if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
-				return true;
-			}
-
-			else{
-				return false;
-			}
-		}
-		
-		catch(err){
-			throw new Error(err);
-		}
-		
-	}
-}
 
 module.exports = {
 	output

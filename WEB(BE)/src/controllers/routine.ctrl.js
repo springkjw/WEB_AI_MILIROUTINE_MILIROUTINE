@@ -1,71 +1,82 @@
 const data = require('../models/index');
 const jwt = require('../token/jwt');
 
-const maxStep = 5;
-
-const user = {
+const token = {
 	isToken : (req, res) => {
-		try{
-			if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
-				return true;
-			}
-
-			else{
-				return false;
-			}
+		if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
+			return true;
 		}
-		
-		catch(err){
-			throw new Error(err);
+
+		else{
+			return false;
 		}
 	},
 	
-	getId : (req, res) => {
-		if(!user.isToken(req, res)){
+	decode : (req, res) => {
+		if(!token.isToken(req, res)){
 			return res.status(400).json({
 				success : false,
 				isLogin : false,
-				err : '로그인을 해주세요!'
+				err : '로그인을 해주세요'
 			})
-		}
+		};
 		
-		const token = req.headers.authorization.split(' ')[1];
-		const decode = jwt.token.decode(token);
-		
-		return decode.id;
+		const jwtToken = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.token.decode(jwtToken)
+		return decoded;
 	}
 }
 
 const routine = {
-	make : (req, res) =>{
+	make : async (req, res) =>{
+		const {name, category, image, auth_cycle, auth_description_list, start_date, duration} = req.body;
 		
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
+		if(!name){
+			res.status(400).json({
 				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
+				err : '이름을 입력해주세요'
+			})
+		} else if(!category){
+			res.status(400).json({
+				success : false,
+				err : '카테고리를 입력해주세요'
+			})
+		} else if(!image){
+			res.status(400).json({
+				success : false,
+				err : '이미지를 첨부해주세요'
+			})
+		} else if(!auth_cycle){
+			res.status(400).json({
+				success : false,
+				err : '주기 횟수를 입력해주세요'
+			})
+		} else if(!auth_description_list){
+			res.status(400).json({
+				success : false,
+				err : '인증 방법을 입력해주세요'
+			})
+		} else if(!start_date){
+			res.status(400).json({
+				success : false,
+				err : '시작일을 입력해주세요'
+			})
+		} else if(!duration){
+			res.status(400).json({
+				success : false,
+				err : '진행기간을 입력해주세요'
 			})
 		}
-		
-		var auth_description_list = req.body.auth_description;
-		
-		const host = data.user.get('id',user.getId(req, res)).no;
-		const name = req.body.name;
-		const category = req.body.category;
-		const image = req.body.fileUrl; 
-		const auth_cycle = req.body.auth_cycle;
+
+		const host = await data.user.get('id', token.decode(req, res).id);
 		const auth_description = JSON.stringify(auth_description_list);
-		const start_date = req.body.start_date;
-		const duration = req.body.duration;
-		const point_info_list = 'NULL'; // 변경 예정
 		
-		const param = [host , name, category, image, auth_cycle, auth_description, start_date, duration, point_info_list];;
+		const param = [host[0].no , name, category, image, auth_cycle, auth_description, start_date, duration];
 		data.routine.add(param);
 		
-		const routine_id = data.routine.get('host', host).id// 만약 routine 이름이 중복 가능일 경우 변경 필요
+		const routine_id = await data.routine.getWithItems(host[0].no, name)
 		const type = 'join';
-		
-		const param2 = [host, routine_id, type];
+		const param2 = [host[0].no, routine_id[0].no, type];
 		data.user_routine.add(param2);
 		
 		res.json({
@@ -82,7 +93,7 @@ const routine = {
 		res.json({
 			success : true,
 			routine_id : routineId,
-			routine : param
+			routine : param[0]
 		})
 	}
 }

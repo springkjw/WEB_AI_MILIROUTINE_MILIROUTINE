@@ -42,19 +42,35 @@ const createHashedPasswordWithSalt = (plainPassword, salt) =>
     );
   });
 
-const output = {
-	setting : async (req, res)=>{
-		if(!user.isToken(req, res)){
+const token = {
+	isToken : (req, res) => {
+		if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
+			return true;
+		}
+
+		else{
+			return false;
+		}
+	},
+	
+	decode : (req, res) => {
+		if(!token.isToken(req, res)){
 			return res.status(400).json({
 				success : false,
 				isLogin : false,
-				err : '로그인을 해주세요!'
-				
+				err : '로그인을 해주세요'
 			})
-		}
+		};
 		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token);
+		const jwtToken = req.headers.authorization.split(' ')[1];
+		const decoded = jwt.token.decode(jwtToken)
+		return decoded;
+	}
+}
+
+const output = {
+	setting : async (req, res)=>{
+		const decoded = token.decode(req, res);
 		
 		const name = decoded.name;
 		const categories = await data.user_category.get('user_no', decoded.no);
@@ -67,17 +83,7 @@ const output = {
 	},
 	
 	mine : async (req, res)=>{
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-				
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token);
+		const decoded = token.decode(req, res);
 		const host = decoded.no;
 		
 		const routines = await data.user_routine.get('user_no', host);
@@ -98,17 +104,7 @@ const output = {
 	},
 	
 	like : async (req, res)=>{
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-				
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
+		const decoded = token.decode(req, res)
 		
 		const myRoutine = await data.user_routine.get('user_no',decoded.no);
 		const likeRoutineId = [];
@@ -125,31 +121,21 @@ const output = {
 		})
 	},
 	
-	auth : (req, res) => {
-		const routine = data.routine.get('id', req.params.routineId);
+	auth : async (req, res) => {
+		const routine = await data.routine.get('id', req.params.routineId);
 		
 		res.json({
 			success : true,
-			routine : routine
+			routine : routine[0]
 		})
 	},
 	
 	goods : async (req, res) => {
-		if(!user.isToken(req, res)){
-			return res.status(403).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-			})
-		}
+		const decoded = token.decode(req, res);
 		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
-		
-		const userPoint = await data.user.get('id', decoded.id).point;
+		const userPoint = await data.user.get('id', decoded.id)[0].point;
 		
 		const goods = await data.goods.getAll();
-		
 		
 		res.json({
 			success : true,
@@ -161,23 +147,10 @@ const output = {
 
 const user = {
 	setInfo : (req, res) =>{
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
+		const decoded = token.decode(req, res);
 		
 		if(req.body.name){
 			data.user.update('nickname', req.body.name, decoded.id); 
-			return res.status(400).json({
-				success : false,
-				err : err
-			})
 		} else{
 			return res.status(400).json({
 				success : false,
@@ -192,10 +165,6 @@ const user = {
 				const param = [decoded.no, category]
 				data.user_category.add(param);
 			}
-			return res.status(400).json({
-				success : false,
-				err : '닉네임을 입력해주세요!'
-			})
 		} else{
 			return res.satus(400).json({
 				success : false,
@@ -209,26 +178,16 @@ const user = {
 	},
 	
 	setPassword : async (req, res) => {
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-				
-			})
-		}
-		
 		if(!req.body.pw){
 			return res.status(400).json({
 				success : false,
 				err : '새로운 비밀번호를 입력해주세요!'
 			})
 		}
+
+		const decoded = token.decode(req, res);
 		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
-		
-		const originalPw = await createHashedPasswordWithSalt(data.user.get('id', decoded.id).pw, data.user.get('id', decoded.id).salt) ;
+		const originalPw = await createHashedPasswordWithSalt(await data.user.get('id', decoded.id)[0].pw, await data.user.get('id', decoded.id)[0].salt) ;
 		
 		if(req.body.pw != originalPw){
 			const { password, salt } = await createHashedPassword(req.body.pw);
@@ -248,45 +207,45 @@ const user = {
 				err : '원래 비밀번호와 같습니다!'
 			})
 		}
-	},
-	
-	isToken : (req, res) => {
-		try{
-			if(req.headers.authorization && req.headers.authorization.split(' ')[1]){
-				return true;
-			}
-
-			else{
-				return false;
-			}
-		}
-		
-		catch(err){
-			res.status(400);
-			throw new Error("로그인이 되어있지 않거나 토큰이 만료되었습니다!");
-		}
 	}
 }
 
 const routine = {
 	auth : (req, res) => {
-		
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
+		const decoded = token.decode(req, res);
 		
 		try{
 			const user_no = decoded.no;
 			const routine_id = req.params.routineId;
 			const {week, day, date, img, text} = req.body;
-
+			
+			if(!week){
+				res.status(400).json({
+					success : false,
+					err : 'week의 정보가 없습니다!'
+				})
+			} else if(!day){
+				res.status(400).json({
+					success : false,
+					err : 'day의 정보가 없습니다!'
+				})
+			} else if(!date){
+				res.status(400).json({
+					success : false,
+					err : 'date의 정보가 없습니다!'
+				})
+			} else if(!img){
+				res.status(400).json({
+					success : false,
+					err : 'img의 정보가 없습니다!'
+				})
+			} else if(!text){
+				res.status(400).json({
+					success : false,
+					err : 'text의 정보가 없습니다!'
+				})
+			}
+			
 			const param = [user_no, routine_id, week, day, date, img, text]
 			data.auth.add(param);
 			
@@ -306,19 +265,17 @@ const routine = {
 
 const goods = {
 	buy : async (req, res) => {
-		if(!user.isToken(req, res)){
-			return res.status(400).json({
-				success : false,
-				isLogin : false,
-				err : '로그인을 해주세요!'
-			})
-		}
-		
-		const token = req.headers.authorization.split(' ')[1];
-		const decoded = jwt.decode(token)
+		const decoded = token.decode(req, res);
 		
 		const userNo = decoded.id;
 		const goodsId = req.body.goods_id;
+		
+		if(!goodsId){
+			res.status(400).json({
+				success : false,
+				err : 'goods_Id의 정보가 없습니다!'
+			})
+		}
 		
 		
 		const date = new Date();
@@ -342,7 +299,7 @@ const goods = {
 		
 		res.json({
 			success : true,
-			goods : goods
+			goods : goods[0]
 		})
 	}
 }
