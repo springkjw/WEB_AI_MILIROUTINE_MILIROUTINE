@@ -95,6 +95,23 @@ const routine = {
 			routine_id : routineId,
 			routine : param[0]
 		})
+	},
+	
+	join : (req, res) => {
+		const decoded = token.decode(req, res);
+		try{
+			data.user_routine.add([decoded.no, req.params.routineId, 'join']);
+		}
+		catch(e){
+			res.status(400).json({
+				success : false,
+				err : e
+			})
+		}
+		
+		res.json({
+			success : true
+		})
 	}
 }
 
