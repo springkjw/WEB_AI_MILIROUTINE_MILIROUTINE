@@ -47,6 +47,7 @@ $ yarn start
 └── 📂 controllers
     📂 models
     📂 routes
+    📂 token
 📄 app.js
 📄 package.json
 ```
