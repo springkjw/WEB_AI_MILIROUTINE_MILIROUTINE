@@ -121,7 +121,7 @@ const output = {
 		})
 	},
 	
-	auth : (req, res) => {
+	auth : async (req, res) => {
 		const routine = await data.routine.get('id', req.params.routineId);
 		
 		res.json({
