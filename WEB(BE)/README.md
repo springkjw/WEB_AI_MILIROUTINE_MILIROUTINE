@@ -420,7 +420,7 @@ INSERT INTO level_exp
   | routine_id | integer | 루틴 고유번호 |
   | routine | object | 해당 루틴의 `routine` 테이블 정보 |
   
-#### 4. **`POST /routine/:routineId` : 루틴 상세 정보**
+#### 4. **`POST /routine/:routineId` : 루틴 참여하기**
 
 - Response Body (200 OK)
   | key | value 타입 | 설명 |
