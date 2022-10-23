@@ -1,14 +1,16 @@
-import { useState, useCallback, useRef } from 'react';
-import {
-  Jumbotron,
-  RoutineItem,
-  Carousel,
-  Segment,
-} from '@/components/Element';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { Jumbotron, RoutineItem, Carousel, Segment } from '@/components/Element';
 import { MainLayout } from '@/components/Layout';
+import { fetchRankedRoutine } from '@/components/Element/RankedRoutineRow';
+import translateCategory from '@/utils/translateCategory';
 
 export const LandingPage = () => {
   const [activeTab, setTab] = useState<string>();
+  const [routines, setRoutines] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchRankedRoutine(1, 10).then(setRoutines);
+  }, []);
 
   const onSelectedTab = useCallback((value: string) => setTab(value), []);
 
@@ -88,16 +90,24 @@ export const LandingPage = () => {
       <section className="w-screen flex flex-col items-center justify-center my-24">
         <div className="container max-w-screen-lg flex flex-row items-center">
           <h2 className="text-black text-2xl font-bold">인기 밀리루틴</h2>
-          <a className="text-sm text-gray-500 py-2 px-6 cursor-pointer">전체</a>
+          <a href="/popular" className="text-sm text-gray-500 py-2 px-6 cursor-pointer">
+            전체
+          </a>
         </div>
 
         <Carousel>
-          <RoutineItem />
-          <RoutineItem />
-          <RoutineItem />
-          <RoutineItem />
-          <RoutineItem />
-          <RoutineItem />
+          {routines.map((routine, idx) => (
+            <RoutineItem
+              key={idx}
+              id={routine.id}
+              host={routine.hostName}
+              name={routine.name}
+              thumbnail_img={routine.thumbnail_img}
+              category={translateCategory(routine.category)}
+              auth_cycle={routine.auth_cycle}
+              participant={routine.participants}
+            />
+          ))}
         </Carousel>
       </section>
     </MainLayout>
