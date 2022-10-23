@@ -253,10 +253,10 @@ const routine = {
 				success : true
 			})
 		}
-		catch(err){
+		catch(e){
 			res.status(400).json({
 				success : false,
-				err : err
+				err : String(e)
 			});
 			
 		}
