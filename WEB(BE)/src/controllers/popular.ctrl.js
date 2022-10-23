@@ -12,6 +12,22 @@ function sortFunction(a, b) {
 
 const output = {
 	popular : async (req, res) => {
+		const from = req.query.from;
+		const to = req.query.to;
+		
+		if(!from){
+			return res.status(400).json({
+				success : false,
+				err : 'from query를 입력해주세요'
+			})
+		}
+		if(!to){
+			return res.status(400).json({
+				success : false,
+				err : 'to query를 입력해주세요'
+			})
+		}
+		
 		const routines = await data.user_routine.getAll();
 
 		if(routines.length == 0){
@@ -47,9 +63,24 @@ const output = {
 		
 		JoinedRoutine.sort(sortFunction);
 		
+		var rankedRoutine = [];
+		
+		try{
+			for(var rank = from; rank <= to; ++rank){
+				const routine = await data.routine.get('id', JoinedRoutine[rank-1][0]);
+				rankedRoutine.push(routine[0]);
+			}
+		}
+		catch(e){
+			return res.status(400).json({
+				success : false,
+				err : String(e)
+			})
+		}
+		
 		res.json({
 			success : true,
-			rankedRoutine : JoinedRoutine 
+			rankedRoutine : rankedRoutine
 		})
 	} 
 }

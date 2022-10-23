@@ -105,7 +105,7 @@ const routine = {
 		catch(e){
 			res.status(400).json({
 				success : false,
-				err : e
+				err : String(e)
 			})
 		}
 		
