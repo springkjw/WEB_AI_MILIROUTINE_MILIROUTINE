@@ -107,8 +107,8 @@ const output = {
 		const decoded = token.decode(req, res)
 		
 		const myRoutine = await data.user_routine.get('user_no',decoded.no);
-		const likeRoutineId = [];
 		
+		var likeRoutineId = [];
 		for(const routine of myRoutine){
 			if(routine.type == 'like'){
 				likeRoutineId.push(routine.routine_id);
