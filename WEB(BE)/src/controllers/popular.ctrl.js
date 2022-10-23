@@ -75,6 +75,9 @@ const output = {
 		try{
 			for(var rank = from; rank <= to; ++rank){
 				const routine = await data.routine.get('id', JoinedRoutine[rank-1][0]);
+				routine[0].participants = JoinedRoutine[rank-1][1];
+				const userInfo = await data.user.get('no', routine[0].host);
+				routine[0].hostName = userInfo[0].nickname;
 				rankedRoutine.push(routine[0]);
 			}
 		}

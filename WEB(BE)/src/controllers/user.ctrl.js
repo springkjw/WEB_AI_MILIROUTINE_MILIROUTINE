@@ -93,7 +93,9 @@ const output = {
 		for(const routine of routines){
 			if(routine.type == 'join'){
 				const myRoutine = await data.routine.get('id', routine.routine_id);
-				JoinedRoutine.push(myRoutine);
+				const userInfo = await data.user.get('no', myRoutine[0].host);
+				myRoutine[0].hostName = userInfo[0].nickname;
+				JoinedRoutine.push(myRoutine[0]);
 			}
 		}
 		
@@ -107,11 +109,13 @@ const output = {
 		const decoded = token.decode(req, res)
 		
 		const myRoutine = await data.user_routine.get('user_no',decoded.no);
-		const likeRoutineId = [];
 		
+		var likeRoutineId = [];
 		for(const routine of myRoutine){
 			if(routine.type == 'like'){
-				likeRoutineId.push(routine.routine_id);
+				const userInfo = await data.user.get('no', routine[0].user_no);
+				routine[0].hostName = userInfo[0].nickname;
+				likeRoutineId.push(routine[0]);
 			}
 		}
 		
@@ -123,6 +127,8 @@ const output = {
 	
 	auth : async (req, res) => {
 		const routine = await data.routine.get('id', req.params.routineId);
+		const userInfo = await data.user.get('no', routine[0].host);
+		routine[0].hostName = userInfo[0].nickname;
 		
 		res.json({
 			success : true,
