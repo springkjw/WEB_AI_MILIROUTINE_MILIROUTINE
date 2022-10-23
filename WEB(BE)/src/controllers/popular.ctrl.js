@@ -10,33 +10,8 @@ function sortFunction(a, b) {
 	}
 }
 
-const output = {
-	popular : async (req, res) => {
-		const from = req.query.from;
-		const to = req.query.to;
-		
-		if(!from){
-			return res.status(400).json({
-				success : false,
-				err : 'from query를 입력해주세요'
-			})
-		}
-		if(!to){
-			return res.status(400).json({
-				success : false,
-				err : 'to query를 입력해주세요'
-			})
-		}
-		
-		const routines = await data.user_routine.getAll();
-
-		if(routines.length == 0){
-			return res.status(400).json({
-				success : false,
-				err : '루틴이 없습니다!'
-			})
-		}
-		
+const process = {
+	sortRank : (routines) => {
 		var JoinedRoutine = [];
 		
 		for(const routine of routines){
@@ -62,6 +37,38 @@ const output = {
 		}
 		
 		JoinedRoutine.sort(sortFunction);
+		return JoinedRoutine;
+	}
+}
+
+const output = {
+	popular : async (req, res) => {
+		const from = req.query.from;
+		const to = req.query.to;
+		
+		if(!from){
+			return res.status(400).json({
+				success : false,
+				err : 'from query를 입력해주세요'
+			})
+		}
+		if(!to){
+			return res.status(400).json({
+				success : false,
+				err : 'to query를 입력해주세요'
+			})
+		}
+		
+		const userRoutines = await data.user_routine.getAll();
+
+		if(userRoutines.length == 0){
+			return res.status(400).json({
+				success : false,
+				err : '루틴이 없습니다!'
+			})
+		}
+		
+		const JoinedRoutine = process.sortRank(userRoutines);
 		
 		var rankedRoutine = [];
 		
@@ -86,5 +93,6 @@ const output = {
 }
 
 module.exports = {
-	output
+	output,
+	process
 }
