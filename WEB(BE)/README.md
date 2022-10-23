@@ -45,8 +45,10 @@ $ yarn start
 └── 📄 Dockerfile
 📂 src
 └── 📂 controllers
+    📂 db
     📂 models
     📂 routes
+    └── 📂 user
     📂 token
 📄 app.js
 📄 package.json
@@ -274,6 +276,7 @@ INSERT INTO level_exp
   | --- | ---------- | ---- |
   | success | true | |
   | isLogin | false | |
+  | rankedRoutine | array of object | 1~10위 까지의 루틴 정보 |
 
 - Response Body (200 OK, 로그인 상태)
   | key | value 타입 | 설명 |
@@ -281,6 +284,7 @@ INSERT INTO level_exp
   | success | true | |
   | isLogin | true | |
   | user | object | 해당 유저의 `user` 테이블 정보 |
+  | rankedRoutine | array of object | 1~10위 까지의 루틴 정보 |
 
 #### 2. **`POST /auth/login` : 로그인**
 
@@ -379,13 +383,13 @@ INSERT INTO level_exp
 
 ### **루틴 관련**
 
-#### 1. **`GET /popular` : 인기 밀리루틴 정보**
+#### 1. **`GET /popular?from=''&to=''` : 인기 밀리루틴 정보**
 
 - Response Body (200 OK)
   | key | value 타입 | 설명 |
   | --- | ---------- | ---- |
   | success | true | |
-  | rankedRoutine | array of array | 참여자 수 내림차순 ex) [[routine_id, 참여자수], ...] |
+  | rankedRoutine | array of array | from에서 to랭크 까지의 루틴 정보 |
 
 #### 2. **`POST /routine/make` : 밀리루틴 개설하기**
 
