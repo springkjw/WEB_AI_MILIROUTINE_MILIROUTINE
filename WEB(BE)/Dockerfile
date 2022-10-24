@@ -6,4 +6,4 @@ COPY package.json .
 
 RUN npm install --no-cache
 
-CMD ["npm", "run", "server"]
+CMD ["npm", "run", "app"]

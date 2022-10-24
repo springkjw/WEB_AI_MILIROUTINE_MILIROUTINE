@@ -1,6 +1,7 @@
 version: "3"
 services:
   db:
+    container_name: db
     build: ./WEB(BE)/database/
     ports:
       - "3306:3306"
@@ -29,8 +30,6 @@ services:
     volumes:
       - "./WEB(BE):/backend"
       - "/WEB(BE)/node_modules"
-    env_file:
-      - "./WEB(BE)/.env"
     stdin_open: true
     tty: true
   nginx:
