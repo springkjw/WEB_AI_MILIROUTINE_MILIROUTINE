@@ -1,20 +1,22 @@
-import { ChangeEvent, useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, Form } from '@/components/Element';
+import { ChangeEvent, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "react-query";
+
+import { Button, Form } from "@/components/Element";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
 
   const goToSignup = useCallback(() => {
-    navigate('/auth/signup');
+    navigate("/auth/signup");
   }, []);
 
   const goToNext = useCallback(() => {
-    navigate('/'); // 미개발
+    navigate("/"); // 미개발
   }, []);
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const onChangeUsername = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     e.persist();
@@ -25,6 +27,11 @@ export const LoginPage = () => {
     e.persist();
     setPassword(e.target.value);
   }, []);
+
+  // const { mutate: loginUser, isLoading } = useMutation(
+  //   (userData: LoginInput) => loginUserFn(userData),
+  //   {}
+  // );
 
   return (
     <>
@@ -52,7 +59,8 @@ export const LoginPage = () => {
           <span className="text-xs text-gray-500">아직 회원이 아니신가요?</span>
           <span
             onClick={goToSignup}
-            className="text-xs text-blue ml-1 cursor-pointer">
+            className="text-xs text-blue ml-1 cursor-pointer"
+          >
             회원가입
           </span>
         </div>

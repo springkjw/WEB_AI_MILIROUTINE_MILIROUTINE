@@ -1,12 +1,48 @@
-version: '3'
+version: "3"
 services:
-    database:
-        build: ./WEB(BE)/database/
-        ports:
-            - '3306:3306'
-        environment:
-            MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-            MYSQL_DATABASE: 'miliroutine_db'
-        command:
-            - --character-set-server=utf8mb4
-            - --collation-server=utf8mb4_unicode_ci
+  db:
+    build: ./WEB(BE)/database/
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: "miliroutine_db"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+  frontend:
+    container_name: frontend
+    build: ./WEB(FE)
+    volumes:
+      - "./WEB(FE)/:/app"
+      - "/app/node_modules"
+    expose:
+      - 5173
+    networks:
+      - miliroutine
+  backend:
+    container_name: backend
+    build: ./WEB(BE)
+    restart: "on-failure"
+    expose:
+      - 3000
+    volumes:
+      - "./WEB(BE):/backend"
+      - "/WEB(BE)/node_modules"
+    env_file:
+      - "./WEB(BE)/.env"
+    stdin_open: true
+    tty: true
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    restart: "on-failure"
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./WEB(FE)/dist:/usr/share/nginx/html
+
+networks:
+  miliroutine:
+    driver: bridge
