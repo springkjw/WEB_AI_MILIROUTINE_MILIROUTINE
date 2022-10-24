@@ -19,6 +19,10 @@ export const Header = () => {
     navigate('/auth/login');
   }, []);
 
+  const goToAbout = useCallback(() => {
+    navigate('/about');
+  }, []);
+
   const goToPopular = useCallback(() => {
     navigate('/popular');
   }, []);
@@ -28,7 +32,7 @@ export const Header = () => {
       <div className="container max-w-screen-xl flex flex-row items-center justify-between py-4">
         <div className="flex flex-row items-center justify-center">
           <img src={Logo} onClick={goToHome} className="cursor-pointer" />
-          <NavItem label="밀리루틴 소개" margin="ml-12" />
+          <NavItem label="밀리루틴 소개" margin="ml-12" onClick={goToAbout} />
           <NavItem label="인기" margin="mx-6" onClick={goToPopular} />
         </div>
 
