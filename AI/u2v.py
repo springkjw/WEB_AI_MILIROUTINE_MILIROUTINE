@@ -1,4 +1,5 @@
 # from numpy import indices
+import os
 import torch
 import gensim
 import json
@@ -10,9 +11,11 @@ from cfg import open
 # model=gensim.models.Word2Vec.load('./AI/kosql.bin')
 
 def u2v(u):
-    model=gensim.models.Word2Vec.load('./AI/kosql.bin')
+    # model=gensim.models.Word2Vec.load('./AI/kosql.bin')
+    model=gensim.models.Word2Vec.load(os.path.join(os.path.dirname(__file__),'kosql.bin'))
 
-    d2v=torch.load('./AI/d2v_tensor.pt')
+    # d2v=torch.load('./AI/d2v_tensor.pt')
+    d2v=torch.load(os.path.join(os.path.dirname(__file__),'d2v_tensor.pt'))
 
     routine=cs.ex('SELECT routine_id FROM user_routine WHERE user_no = '+str(u)+';')
     routine=[r[0] for r in routine]  # ((ㅁ,),(ㅎ,),....)

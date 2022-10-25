@@ -20,7 +20,7 @@ for r in routine:
 	tensor.append(temp.tolist())
 
 print(tensor)
-torch.save(torch.FloatTensor(tensor),'./AI/d2v_tensor.pt')
+torch.save(torch.FloatTensor(tensor[:-3]),'./AI/d2v_tensor.pt')
 
 # with open('r5e_name.txt')as r,open('r5e_vector.txt','w')as w:
 # 	r=[stopword.Remove(komoran.nouns(krpre.Clean_text(line),0))for line in r]
